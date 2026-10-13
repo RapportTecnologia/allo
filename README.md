@@ -34,9 +34,27 @@ Este projeto utiliza o framework **Foundry** para compilação e testes.
    forge test
    ```
 
-(Nota: O Relatório Técnico em PDF detalhando os diagramas e as análises "Antes vs. Depois" encontra-se na raiz deste repositório com o nome Relatorio_Refatoracao_Allo.pdf).
+## Materiais Complementares
 
+Para uma visão detalhada das mudanças, diagramas e defesa arquitetural deste projeto, consulte os arquivos disponíveis na raiz deste repositório:
 
+- **[Relatório Técnico Completo](./Relatorio_Refatoracao_Allo.pdf):** Diagnóstico do sistema legado, análises aprofundadas de "Antes vs. Depois", diagramas de classe e fluxo.
+- **[Slides da Apresentação](./Apresentacao_Allo_Protocol.pdf):** Resumo executivo dos problemas identificados e padrões aplicados (material utilizado na apresentação em sala de aula).
+
+## Estrutura das Refatorações
+
+Os principais arquivos modificados e criados durante o trabalho encontram-se em `contracts/core/`:
+* `AlloStarterFacade.sol` (Novo)
+* `interfaces/IFeeStrategy.sol` e `FlatFeeStrategy.sol` (Novo)
+* `StrategyFactory.sol` (Novo)
+* `Allo.sol` (Refatorado)
+* `BaseStrategy.sol` / `DirectGrantsLite.sol` (Refatorado com padrões de Estado)
+
+## Validação e Testes
+
+A refatoração preservou o comportamento externo do protocolo. Toda a suíte de testes legada foi executada com sucesso usando o Foundry:
+- **Testes executados e aprovados:** 1.147
+- **Taxa de sucesso arquitetural:** 100%
 
 
 # Allo Protocol
@@ -45,6 +63,12 @@ The Allo Protocol introduces a sophisticated ecosystem on the Ethereum blockchai
 
 ## Table of Contents
 
+- [Trabalho 1 - Refatoração com Padrões de Projeto em Sistema Legado (GoF)](#trabalho-1---refatoração-com-padrões-de-projeto-em-sistema-legado-gof)
+  - [Descrição do Projeto](#descrição-do-projeto)
+  - [Instruções de Execução](#instruções-de-execução)
+  - [Materiais Complementares](#materiais-complementares)
+  - [Estrutura das Refatorações](#estrutura-das-refatorações)
+  - [Validação e Testes](#validação-e-testes)
 - [Allo Protocol](#allo-protocol)
   - [Table of Contents](#table-of-contents)
   - [Diagram](#diagram)
