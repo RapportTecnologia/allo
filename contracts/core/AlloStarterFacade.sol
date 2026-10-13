@@ -6,7 +6,10 @@ import "./interfaces/IRegistry.sol";
 import "./interfaces/IAllo.sol";
 import "./libraries/Metadata.sol";
 
-contract AlloStarterFacade {
+/// @notice Academic prototype for the Facade pattern.
+/// @dev Abstract by design: the current Allo authorization model cannot safely preserve the end user as
+///      pool administrator and asset payer through an intermediary contract.
+abstract contract AlloStarterFacade {
     IRegistry public registry;
     IAllo public allo;
 

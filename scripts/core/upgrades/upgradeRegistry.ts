@@ -18,7 +18,7 @@ export async function upgradeRegistry() {
   const balance = await ethers.provider.getBalance(accountAddress);
 
   const deployments = new Deployments(chainId, "registry");
-  const proxyAddress = deployments.getAllo();
+  const proxyAddress = deployments.getRegistry();
 
   console.log(`This script upgrades the Registry contract on ${networkName}`);
 
@@ -31,10 +31,22 @@ export async function upgradeRegistry() {
     proxy: proxyAddress,
   });
 
-  console.log("Upgrading Registry...");
+  if (balance === 0n) {
+    throw new Error("Upgrade account has no native balance for transaction fees");
+  }
+
+  console.log("Validating Registry storage layout...");
 
   const RegistryV2 = await ethers.getContractFactory("Registry", account);
-  const instance = await upgrades.upgradeProxy(proxyAddress, RegistryV2);
+  await upgrades.validateUpgrade(proxyAddress, RegistryV2, {
+    kind: "transparent",
+  });
+
+  console.log("Upgrading Registry...");
+
+  const instance = await upgrades.upgradeProxy(proxyAddress, RegistryV2, {
+    kind: "transparent",
+  });
 
   await instance.waitForDeployment();
 
@@ -46,7 +58,7 @@ export async function upgradeRegistry() {
   objectToWrite.implementation = implementation;
   deployments.write(objectToWrite);
 
-  verifyContract(implementation, []);
+  await verifyContract(implementation, []);
 
   console.log("Registry Proxy Upgraded at:", instance.target);
   console.log("Registry implementation updated to:", implementation);

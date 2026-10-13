@@ -170,4 +170,28 @@ contract FeeStrategyTest is Test, AlloSetup, RegistrySetupFull, Native, Errors {
         vm.expectRevert(ZERO_ADDRESS.selector);
         allo().updateFeeStrategy(address(0));
     }
+
+    function testRevert_AC_GOF_001_updateFeeStrategy_EOA() public {
+        vm.expectRevert(INVALID.selector);
+        allo().updateFeeStrategy(makeAddr("notAContract"));
+    }
+
+    function testRevert_AC_GOF_002_fundPool_feeExceedsAmount() public {
+        uint256 poolId = _utilCreatePool(0);
+        allo().updateFeeStrategy(address(new MockFeeStrategy(11 ether)));
+
+        vm.expectRevert(INVALID_FEE.selector);
+        allo().fundPool(poolId, 10 ether);
+    }
+
+    function test_AC_GOF_003_initializeGoFPatterns_migrationRunsOnce() public {
+        vm.prank(makeAddr("proxyAdmin"));
+        allo().initializeGoFPatterns();
+
+        assertTrue(address(allo().getFeeStrategy()) != address(0));
+        assertTrue(address(allo().getStrategyFactory()) != address(0));
+
+        vm.expectRevert();
+        allo().initializeGoFPatterns();
+    }
 }

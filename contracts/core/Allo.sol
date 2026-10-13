@@ -145,6 +145,14 @@ contract Allo is
         _updateStrategyFactory(address(new StrategyFactory()));
     }
 
+    /// @notice Initializes the GoF fee strategy and strategy factory after upgrading an existing proxy.
+    /// @dev Must be executed atomically with the implementation upgrade. It accepts no caller-controlled
+    ///      configuration, and the reinitializer guard prevents replay.
+    function initializeGoFPatterns() external reinitializer(2) {
+        _deployDefaultFeeStrategy(percentFee);
+        _updateStrategyFactory(address(new StrategyFactory()));
+    }
+
     // ====================================
     // =========== Modifier ===============
     // ====================================
@@ -573,11 +581,10 @@ contract Allo is
 
         // Delegate the fee calculation to the injected fee strategy
         uint256 feeAmount = feeStrategy.calculateFee(_amount);
+        if (feeAmount > _amount) revert INVALID_FEE();
 
         if (feeAmount > 0) {
             amountAfterFee -= feeAmount;
-
-            if (feeAmount + amountAfterFee != _amount) revert INVALID();
 
             if (_token == NATIVE) {
                 _transferAmountFrom(_token, TransferData({from: msg.sender, to: treasury, amount: feeAmount}));
@@ -694,6 +701,7 @@ contract Allo is
     /// @param _feeStrategy The address of the new fee strategy
     function _updateFeeStrategy(address _feeStrategy) internal {
         if (_feeStrategy == address(0)) revert ZERO_ADDRESS();
+        if (_feeStrategy.code.length == 0) revert INVALID();
 
         feeStrategy = IFeeStrategy(_feeStrategy);
 
@@ -706,6 +714,7 @@ contract Allo is
     /// @param _strategyFactory The address of the new strategy factory
     function _updateStrategyFactory(address _strategyFactory) internal {
         if (_strategyFactory == address(0)) revert ZERO_ADDRESS();
+        if (_strategyFactory.code.length == 0) revert INVALID();
 
         strategyFactory = IStrategyFactory(_strategyFactory);
 

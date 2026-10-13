@@ -128,6 +128,9 @@ interface IAllo {
         uint256 _baseFee
     ) external;
 
+    /// @notice Initializes GoF dependencies atomically while upgrading an existing proxy
+    function initializeGoFPatterns() external;
+
     /// @notice Creates a new pool (with a custom strategy)
     /// @dev 'msg.sender' must be a member or owner of a profile to create a pool with or without a custom strategy, The encoded data
     ///      will be specific to a given strategy requirements, reference the strategy implementation of 'initialize()'. The strategy

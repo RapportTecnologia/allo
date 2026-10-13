@@ -121,4 +121,9 @@ contract StrategyFactoryTest is Test, AlloSetup, RegistrySetupFull, Native, Erro
         vm.expectRevert(ZERO_ADDRESS.selector);
         allo().updateStrategyFactory(address(0));
     }
+
+    function testRevert_AC_GOF_001_updateStrategyFactory_EOA() public {
+        vm.expectRevert(INVALID.selector);
+        allo().updateStrategyFactory(makeAddr("notAContract"));
+    }
 }

@@ -1,6 +1,7 @@
 import hre, { ethers, upgrades } from "hardhat";
 import {
   Deployments,
+  confirmContinue,
   getImplementationAddress,
   verifyContract
 } from "../../utils/scripts";
@@ -21,19 +22,33 @@ export async function upgradeAllo() {
 
   console.log(`This script upgrades the Allo contract on ${networkName}`);
 
-  console.table ({
+  await confirmContinue({
     contract: "Upgrading Allo",
     chainId: network.chainId,
     network: network.name,
     account: accountAddress,
     balance: ethers.formatEther(balance),
     proxy: proxyAddress,
+    migration: "initializeGoFPatterns",
   });
 
-  console.log("Upgrading Allo...");
+  if (balance === 0n) {
+    throw new Error("Upgrade account has no native balance for transaction fees");
+  }
+
+  console.log("Validating Allo storage layout...");
 
   const AlloV2 = await ethers.getContractFactory("Allo", account);
-  const instance = await upgrades.upgradeProxy(proxyAddress, AlloV2);
+  await upgrades.validateUpgrade(proxyAddress, AlloV2, {
+    kind: "transparent",
+  });
+
+  console.log("Upgrading Allo and executing migration atomically...");
+
+  const instance = await upgrades.upgradeProxy(proxyAddress, AlloV2, {
+    call: "initializeGoFPatterns",
+    kind: "transparent",
+  });
 
   await instance.waitForDeployment();
 
@@ -45,7 +60,7 @@ export async function upgradeAllo() {
   objectToWrite.implementation = implementation;
   deployments.write(objectToWrite);
 
-  verifyContract(implementation, []);
+  await verifyContract(implementation, []);
 
   console.log("Allo Proxy Upgraded at:", instance.target);
   console.log("Allo implementation updated to:", implementation);

@@ -50,11 +50,13 @@ Os principais arquivos modificados e criados durante o trabalho encontram-se em 
 * `Allo.sol` (Refatorado)
 * `BaseStrategy.sol` / `DirectGrantsLite.sol` (Refatorado com padrões de Estado)
 
-## Validação e Testes
+## Validação, segurança e upgrade
 
-A refatoração preservou o comportamento externo do protocolo. Toda a suíte de testes legada foi executada com sucesso usando o Foundry:
-- **Testes executados e aprovados:** 1.147
-- **Taxa de sucesso arquitetural:** 100%
+A revisão de segurança está documentada em [`docs/audit-report.md`](./docs/audit-report.md), no [`docs/security-checklist.md`](./docs/security-checklist.md), nos [`requisitos`](./REQUIREMENTS.md) e no [`runbook de deploy`](./docs/deployment-security.md). Antes de atualizar um proxy existente, o upgrade deve chamar `initializeGoFPatterns()` atomicamente para inicializar a Fee Strategy e a Strategy Factory.
+
+> **Atenção:** `AlloStarterFacade` é apenas um protótipo acadêmico. Ela não deve ser publicada em produção enquanto não preservar, por autorização autenticada, o usuário como administrador do pool e pagador dos ativos.
+
+A suíte Foundry deve ser executada com `forge test --no-match-contract '(Lockup|SQF)'`. Na revisão de 2026-10-13, a execução local ficou bloqueada porque o binário `forge` não estava instalado e o Hardhat disponível exigia Node.js 22.13.0 ou superior. Não há, portanto, certificação de 100% de sucesso ou cobertura nesta revisão.
 
 
 # Allo Protocol

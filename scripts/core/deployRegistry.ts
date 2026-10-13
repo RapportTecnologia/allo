@@ -27,6 +27,12 @@ export async function deployRegistry() {
   if (!registryParams) {
     throw new Error(`Registry params not found for chainId: ${chainId}`);
   }
+  if (balance === 0n) {
+    throw new Error("Deployer account has no native balance for transaction fees");
+  }
+  if (!ethers.isAddress(registryParams.owner) || registryParams.owner === ethers.ZeroAddress) {
+    throw new Error("Registry owner must be a non-zero address");
+  }
 
   console.table({
     contract: "Registry.sol",
@@ -46,6 +52,7 @@ export async function deployRegistry() {
     Registry,
     [registryParams.owner],
     {
+      kind: "transparent",
       txOverrides: {
         maxFeePerGas: feeData.maxFeePerGas,
         maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,

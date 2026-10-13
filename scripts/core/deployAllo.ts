@@ -30,6 +30,22 @@ export async function deployAllo() {
 
   const registryAddress = deployments.getRegistry();
 
+  if (balance === 0n) {
+    throw new Error("Deployer account has no native balance for transaction fees");
+  }
+  if (!ethers.isAddress(alloParams.owner) || alloParams.owner === ethers.ZeroAddress) {
+    throw new Error("Allo owner must be a non-zero address");
+  }
+  if (!ethers.isAddress(alloParams.treasury) || alloParams.treasury === ethers.ZeroAddress) {
+    throw new Error("Allo treasury must be a non-zero address");
+  }
+  if (!ethers.isAddress(registryAddress) || registryAddress === ethers.ZeroAddress) {
+    throw new Error("Registry must be a non-zero address");
+  }
+  if ((await ethers.provider.getCode(registryAddress)) === "0x") {
+    throw new Error("Registry address has no deployed bytecode");
+  }
+
   console.table({
     contract: "Deploy Allo.sol",
     chainId: chainId,
@@ -57,6 +73,7 @@ export async function deployAllo() {
       alloParams.baseFee,
     ],
     {
+      kind: "transparent",
       txOverrides: {
         maxFeePerGas: feeData.maxFeePerGas,
         maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
