@@ -1,0 +1,41 @@
+---
+layout: default
+---
+
+<div class="home">
+  {% if page.hero %}
+  <section class="hero">
+    <div class="wrapper hero-grid">
+      <div class="hero-content">
+        <p class="eyebrow">RAPPORT TECNOLOGIA · ALLO V2</p>
+        <h1>{{ page.hero.title | default: site.title }}</h1>
+        <p class="hero-heading">Boas ideias merecem <span>ganhar vida.</span></p>
+        {% if page.hero.subtitle %}
+          <p class="hero-subtitle">{{ page.hero.subtitle }}</p>
+        {% endif %}
+        {% if page.hero.buttons %}
+          <div class="hero-buttons">
+            {% for btn in page.hero.buttons %}
+              <a class="{% if btn.primary %}btn-primary{% else %}btn-secondary{% endif %}" href="{{ btn.url | relative_url }}">{{ btn.label }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <p class="hero-note">Código aberto. Conhecimento compartilhado. Construção coletiva.</p>
+      </div>
+      <div class="hero-visual" aria-label="Da comunidade aos projetos: perfis, pools e estratégias de alocação">
+        <span class="visual-label">CONEXÕES QUE GERAM IMPACTO</span>
+        <div class="visual-node node-community"><span aria-hidden="true">◎</span> Comunidade<small>Ideias e colaboração</small></div>
+        <div class="visual-core"><span>allo<span class="core-dot">.</span></span><small>Conectando recursos<br>e possibilidades</small></div>
+        <div class="visual-node node-pools"><span aria-hidden="true">◈</span> Pools<small>Recursos reunidos</small></div>
+        <div class="visual-node node-projects"><span aria-hidden="true">✳</span> Projetos<small>Impacto na prática</small></div>
+        <div class="visual-caption">Perfis <span>→</span> Pools <span>→</span> Alocação</div>
+      </div>
+    </div>
+  </section>
+  <div class="principles"><div class="wrapper"><span>Desenvolvido para aprender e construir</span><strong>01 / Código aberto</strong><strong>02 / Governança coletiva</strong><strong>03 / Arquitetura modular</strong></div></div>
+  {% endif %}
+
+  <div class="wrapper">
+    {{ content }}
+  </div>
+</div>

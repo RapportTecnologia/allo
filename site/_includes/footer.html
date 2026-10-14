@@ -1,0 +1,38 @@
+<footer class="site-footer">
+  <div class="wrapper">
+    <div class="footer-grid">
+      <div>
+        <h3 class="footer-brand">{{ site.title }}</h3>
+        <p class="footer-tagline">{{ site.subtitle }}</p>
+      </div>
+      <div>
+        <h4>Links</h4>
+        <ul class="footer-links">
+          <li><a href="{{ "/" | relative_url }}">Início</a></li>
+          <li><a href="{{ "/historia/" | relative_url }}">História</a></li>
+          <li><a href="{{ "/arquitetura/" | relative_url }}">Arquitetura</a></li>
+          <li><a href="{{ "/dao/" | relative_url }}">Governança DAO</a></li>
+          <li><a href="{{ "/uso/" | relative_url }}">Como Usar</a></li>
+          <li><a href="{{ "/seguranca/" | relative_url }}">Segurança</a></li>
+          <li><a href="{{ "/contribuir/" | relative_url }}">Contribuir</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Fontes</h4>
+        <ul class="footer-links">
+          <li><a href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">Fork Acadêmico ↗</a></li>
+          <li><a href="https://github.com/allo-protocol/allo-v2" target="_blank" rel="noopener">Allo Protocol V2 ↗</a></li>
+          <li><a href="https://docs.allo.gitcoin.co/" target="_blank" rel="noopener">Documentação Allo ↗</a></li>
+          <li><a href="https://rapport.tec.br" target="_blank" rel="noopener">Rapport Tecnologia ↗</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>
+        &copy; {{ "now" | date: "%Y" }} Rapport Tecnologia.
+        Conteúdo baseado no <a href="https://github.com/allo-protocol/allo-v2" target="_blank" rel="noopener">Allo Protocol V2</a> (Gitcoin, AGPL-3.0)
+        e no trabalho acadêmico de <strong>Francisco Josias da Silva Batista</strong>.
+      </p>
+    </div>
+  </div>
+</footer>

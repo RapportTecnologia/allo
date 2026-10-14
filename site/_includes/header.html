@@ -1,0 +1,44 @@
+<header class="site-header">
+  <div class="wrapper">
+    <a class="site-title" href="{{ "/" | relative_url }}">
+      <span class="site-logo" aria-hidden="true">a.</span>
+      <span>{{ site.title }}<small>por Rapport Tecnologia</small></span>
+    </a>
+    <nav class="site-nav" aria-label="Navegação principal">
+      <button type="button" class="nav-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navigation">
+        <span class="menu-icon"></span>
+      </button>
+      <div class="nav-menu" id="navigation">
+        <a class="nav-link{% if page.url == '/' %} active{% endif %}" href="{{ "/" | relative_url }}">Início</a>
+        <a class="nav-link{% if page.url contains '/historia' %} active{% endif %}" href="{{ "/historia/" | relative_url }}">História</a>
+        <a class="nav-link{% if page.url contains '/arquitetura' %} active{% endif %}" href="{{ "/arquitetura/" | relative_url }}">Arquitetura</a>
+        <a class="nav-link{% if page.url contains '/dao' %} active{% endif %}" href="{{ "/dao/" | relative_url }}">DAO</a>
+        <a class="nav-link{% if page.url contains '/uso' %} active{% endif %}" href="{{ "/uso/" | relative_url }}">Como Usar</a>
+        <a class="nav-link{% if page.url contains '/contribuir' %} active{% endif %}" href="{{ "/contribuir/" | relative_url }}">Contribuir</a>
+        <a class="nav-link nav-cta" href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const nav = document.querySelector('.nav-menu');
+  function closeMenu() {
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir menu');
+    nav.classList.remove('is-open');
+  }
+  toggle.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') !== 'true';
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    nav.classList.toggle('is-open', open);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      closeMenu(); toggle.focus();
+    }
+  });
+  nav.addEventListener('click', event => { if (event.target.closest('a')) closeMenu(); });
+</script>

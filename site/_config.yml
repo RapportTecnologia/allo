@@ -1,0 +1,52 @@
+title: "ALLO Protocol"
+title_separator: "|"
+subtitle: "Alocação e Distribuição Descentralizada de Fundos"
+description: >-
+  Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF,
+  governança DAO, instruções de uso e guia de contribuição para desenvolvedores.
+baseurl: "/allo"
+url: "https://rapport.tec.br"
+
+author:
+  name: "Rapport Tecnologia"
+  email: "admin@rapport.tec.br"
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: "highlight"
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+      start_line: 1
+
+collections:
+  pages:
+    output: true
+    permalink: /:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+  - ".sass-cache/"
+  - ".jekyll-cache/"
+  - "node_modules/"

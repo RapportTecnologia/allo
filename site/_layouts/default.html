@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  {% include head.html %}
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  {% include header.html %}
+  <main id="conteudo" tabindex="-1" class="page-content" aria-label="Conteúdo">
+    {{ content }}
+  </main>
+  {% include footer.html %}
+  <script type="module">
+    const blocks = [...document.querySelectorAll('pre code.language-mermaid')];
+    if (blocks.length) {
+      try {
+        const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'strict',
+          theme: 'base',
+          fontFamily: 'Inter, Arial, sans-serif',
+          flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'linear' },
+          themeVariables: {
+            darkMode: false,
+            background: '#ffffff',
+            primaryColor: '#fff0e9',
+            primaryTextColor: '#222222',
+            primaryBorderColor: '#a63824',
+            secondaryColor: '#edf4ef',
+            secondaryTextColor: '#222222',
+            secondaryBorderColor: '#46634e',
+            tertiaryColor: '#f5f4f2',
+            tertiaryTextColor: '#222222',
+            tertiaryBorderColor: '#68605b',
+            lineColor: '#55515a',
+            textColor: '#222222',
+            mainBkg: '#fff0e9',
+            nodeBorder: '#a63824',
+            clusterBkg: '#f5f4f2',
+            clusterBorder: '#68605b',
+            titleColor: '#222222',
+            edgeLabelBackground: '#ffffff',
+            nodeTextColor: '#222222',
+            fontSize: '16px'
+          }
+        });
+        for (const [index, block] of blocks.entries()) {
+          try {
+            const { svg, bindFunctions } = await mermaid.render(`allo-diagram-${index}`, block.textContent);
+            const diagram = document.createElement('div');
+            diagram.className = 'mermaid';
+            diagram.tabIndex = 0;
+            diagram.setAttribute('role', 'region');
+            diagram.setAttribute('aria-label', 'Diagrama do protocolo. Use as setas para rolar horizontalmente.');
+            diagram.innerHTML = svg;
+            block.parentElement.replaceWith(diagram);
+            bindFunctions?.(diagram);
+            const hint = document.createElement('p');
+            hint.className = 'diagram-hint';
+            hint.textContent = 'Diagrama em tamanho legível. Se necessário, role na horizontal para explorar.';
+            diagram.after(hint);
+          } catch (error) {
+            console.error('Não foi possível renderizar o diagrama:', error);
+          }
+        }
+      } catch (error) {
+        console.error('Mermaid indisponível; a definição textual foi preservada.', error);
+      }
+    }
+  </script>
+</body>
+</html>
