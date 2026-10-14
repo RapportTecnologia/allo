@@ -18,20 +18,32 @@ Os padrões aplicados foram:
 
 ## Instruções de Execução
 
-Este projeto utiliza o framework **Foundry** para compilação e testes.
+O projeto utiliza **Foundry** para compilação/testes e **Hardhat** para deploy/scripts de upgrade.
 
-1. **Pré-requisitos:** Instale o Foundry (https://getfoundry.sh/).
+1. **Pré-requisitos**
+   * Instale o Foundry: https://getfoundry.sh/
+   * Use Node.js 22 (definido em `.nvmrc`):
+     ```bash
+     nvm use 22
+     ```
 2. **Instalar dependências:**
    ```bash
    forge install
+   npm install
    ```
-3. Compilar os contratos:
+3. **Configurar variáveis de ambiente:** copie `.env.sample` para `.env` e preencha RPCs, chaves e configuração de governança (`GOV_SIGNERS`, `GOV_THRESHOLD`).
+4. **Compilar os contratos:**
    ```bash
    forge build
+   npx hardhat compile
    ```
-4. Executar a suíte de testes:
+5. **Executar a suíte de testes:**
    ```bash
-   forge test
+   forge test --no-match-contract '(Lockup|SQF)'
+   ```
+6. **Executar testes de governança:**
+   ```bash
+   forge test --match-path "test/foundry/governance/*.t.sol"
    ```
 
 ## Materiais Complementares
@@ -43,20 +55,66 @@ Para uma visão detalhada das mudanças, diagramas e defesa arquitetural deste p
 
 ## Estrutura das Refatorações
 
-Os principais arquivos modificados e criados durante o trabalho encontram-se em `contracts/core/`:
-* `AlloStarterFacade.sol` (Novo)
-* `interfaces/IFeeStrategy.sol` e `FlatFeeStrategy.sol` (Novo)
-* `StrategyFactory.sol` (Novo)
+Os principais arquivos modificados e criados durante o trabalho encontram-se em `contracts/core/` e `contracts/governance/`:
+
+**Core e GoF:**
+* `AlloStarterFacade.sol` (Novo — SEC-002 corrigido)
+* `interfaces/IFeeStrategy.sol` e `fees/FlatFeeStrategy.sol` (Novo)
+* `interfaces/IStrategyFactory.sol` e `StrategyFactory.sol` (Novo)
 * `Allo.sol` (Refatorado)
-* `BaseStrategy.sol` / `DirectGrantsLite.sol` (Refatorado com padrões de Estado)
+* `Registry.sol` (Refatorado para transferência de `ALLO_OWNER` ao timelock)
+* `BaseStrategy.sol` / `strategies/direct-grants-lite/DirectGrantsLite.sol` (Refatorado com padrões de Estado)
+
+**Governança (SEC-005 / SEC-009):**
+* `contracts/governance/AlloTimelockController.sol`
+* `contracts/governance/AlloMultisigWallet.sol`
+* `contracts/governance/interfaces/IAlloTimelockController.sol`
+
+**Scripts e testes:**
+* `scripts/governance/*` — deploy, transferência de ownership, proposta/confirmação/execução e upgrade via governança.
+* `test/foundry/governance/*` — testes de multisig, timelock e integração.
 
 ## Validação, segurança e upgrade
 
-A revisão de segurança está documentada em [`docs/audit-report.md`](./docs/audit-report.md), no [`docs/security-checklist.md`](./docs/security-checklist.md), nos [`requisitos`](./REQUIREMENTS.md) e no [`runbook de deploy`](./docs/deployment-security.md). Antes de atualizar um proxy existente, o upgrade deve chamar `initializeGoFPatterns()` atomicamente para inicializar a Fee Strategy e a Strategy Factory.
+A revisão de segurança está documentada em [`docs/audit-report.md`](./docs/audit-report.md), [`docs/security-checklist.md`](./docs/security-checklist.md), [`REQUIREMENTS.md`](./REQUIREMENTS.md) e [`docs/deployment-security.md`](./docs/deployment-security.md).
 
-> **Atenção:** `AlloStarterFacade` é apenas um protótipo acadêmico. Ela não deve ser publicada em produção enquanto não preservar, por autorização autenticada, o usuário como administrador do pool e pagador dos ativos.
+### Branches de revisão
 
-A suíte Foundry deve ser executada com `forge test --no-match-contract '(Lockup|SQF)'`. Na revisão de 2026-10-13, a execução local ficou bloqueada porque o binário `forge` não estava instalado e o Hardhat disponível exigia Node.js 22.13.0 ou superior. Não há, portanto, certificação de 100% de sucesso ou cobertura nesta revisão.
+| Branch | Foco |
+|---|---|
+| `refatoracao-gof-revisao` | Auditoria e correções GoF: reinitializer, validação de dependências, limite de taxa, scripts de deploy/upgrade. |
+| `refatoracao-gof-revisao-facade` | Correção do SEC-002: `AlloStarterFacade` redesenhada como operador policy-bound em fluxo de duas fases, com testes dedicados. |
+| `refatoracao-gof-revisao-vulnerabilidades-npm` | Eliminação de vulnerabilidades críticas/alta do `npm audit` (0 críticas/altas residuais). |
+| `refatoracao-gof-revisao-multisig-dao` | Governança on-chain SEC-005/SEC-009: timelock de 48h + multisig M-of-N para `Allo`, `Registry` e `ProxyAdmin`. |
+
+### Pontos críticos corrigidos
+
+* **Upgrade seguro:** `initializeGoFPatterns()` é executado atomicamente por `ProxyAdmin.upgradeAndCall` durante o upgrade de um proxy existente.
+* **Dependências:** Fee Strategy e Strategy Factory rejeitam EOAs.
+* **Taxa:** `INVALID_FEE()` é revertido quando a taxa calculada supera o valor financiado.
+* **Facade (SEC-002):** fluxo em duas fases preserva o usuário como owner do perfil e pagador dos ativos; a Facade imutável só exerce `POOL_ADMIN_ROLE` via funções restritas ao owner do perfil.
+* **Governança (SEC-005 / SEC-009):** `AlloTimelockController` impõe delay mínimo de 48h e `AlloMultisigWallet` exige M-of-N confirmações; scripts transferem `Allo.owner()`, `Registry.ALLO_OWNER` e `ProxyAdmin.owner()` para o timelock.
+
+> **Atenção:** `AlloStarterFacade` continua sendo um artefato experimental. Embora tenha sido redesenhada e 14 testes de identidade/authorization/pagamento passem, ela retém `POOL_ADMIN_ROLE` e só deve ser publicada em produção depois de auditoria externa independente e de aprovação explícita do trust residual documentado.
+
+### Execução e resultados atuais
+
+O toolchain foi normalizado (Foundry via `~/.foundry/bin` e Node.js 22 via `.nvmrc`). A suíte Foundry deve ser executada com:
+
+```bash
+forge test --no-match-contract '(Lockup|SQF)'
+```
+
+Resultados consolidados na última execução (2026-10-14):
+
+* `forge build`: sucesso.
+* `npx hardhat compile`: 185 arquivos Solidity compilados.
+* `forge test --no-match-contract '(Lockup|SQF)'`: **1188 testes passando, 0 falhas**.
+* Governança: **23 testes passando** (`AlloMultisigWallet`: 13, `AlloTimelockController`: 6, `GovernanceIntegration`: 4).
+* Facade + GoF core: **50 testes passando** (14 Facade + 22 Fee/Factory + 14 adjacentes).
+* `npm audit`: **0 críticas / 0 altas**; 62 residuais low/moderate em dependências de dev sem correção upstream.
+
+> A certificação de cobertura mínima de 90% nos contratos core e os scans Slither/Mythril/Echidna ainda são obrigatórios antes de qualquer deploy em mainnet.
 
 
 # Allo Protocol
@@ -70,7 +128,7 @@ The Allo Protocol introduces a sophisticated ecosystem on the Ethereum blockchai
   - [Instruções de Execução](#instruções-de-execução)
   - [Materiais Complementares](#materiais-complementares)
   - [Estrutura das Refatorações](#estrutura-das-refatorações)
-  - [Validação e Testes](#validação-e-testes)
+  - [Validação, Segurança e Upgrade](#validação-segurança-e-upgrade)
 - [Allo Protocol](#allo-protocol)
   - [Table of Contents](#table-of-contents)
   - [Diagram](#diagram)
@@ -171,7 +229,7 @@ The Allo Protocol delegates distinct roles to participants to foster efficient g
 
 * **Profile Owners:** Users who create profiles using the `Registry` contract. These profiles are central to protocol interactions, offering a unique identity for users and enabling secure external calls through the `Anchor` contract.
     
-* **Allo Owner:** Individuals who control the `Allo` contract, possessing the authority to manage fund recovery, fee parameters, and treasury addresses. Their role is pivotal in ensuring the protocol's financial stability.
+* **Protocol Governance (`AlloTimelockController` + `AlloMultisigWallet`):** On the governance branches, the Allo Owner is the timelock, and the only proposer/executor is the M-of-N multisig. Critical actions require multiple signatures plus a 48h on-chain delay.
   
 * **Profile Member:** Members of a Registry profile have specific access rights as defined by the profile's owner.
     
