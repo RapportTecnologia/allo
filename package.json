@@ -30,7 +30,14 @@
     "/////// deploy-test ///////": "echo 'deploy test scripts'",
     "create-profile": "npx hardhat run scripts/test/createProfile.ts --network",
     "create-pool": "npx hardhat run scripts/test/createPool.ts --network",
-    "create-da-pool": "npx hardhat run scripts/test/createDirectAllocationPool.ts --network"
+    "create-da-pool": "npx hardhat run scripts/test/createDirectAllocationPool.ts --network",
+    "/////// governance ///////": "echo 'governance scripts'",
+    "deploy-governance": "npx hardhat run scripts/governance/deployGovernance.ts --network",
+    "transfer-ownership-to-governance": "npx hardhat run scripts/governance/transferOwnershipToGovernance.ts --network",
+    "propose-admin-call": "npx hardhat run scripts/governance/proposeAdminCall.ts --network",
+    "confirm-proposal": "npx hardhat run scripts/governance/confirmProposal.ts --network",
+    "execute-proposal": "npx hardhat run scripts/governance/executeProposal.ts --network",
+    "upgrade-allo-governance": "npx hardhat run scripts/governance/upgradeAlloViaGovernance.ts --network"
   },
   "devDependencies": {
     "@matterlabs/hardhat-zksync-deploy": "^1.2.1",

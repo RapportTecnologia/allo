@@ -81,6 +81,22 @@ contract Registry is IRegistry, Initializable, Native, AccessControlUpgradeable,
 
         // Grant the role to the owner
         _grantRole(ALLO_OWNER, _owner);
+
+        // Allow future ALLO_OWNER holders to manage their own role.
+        // This makes it possible to transfer ownership to a timelock or multisig.
+        _setRoleAdmin(ALLO_OWNER, ALLO_OWNER);
+    }
+
+    /// @notice Transfers the ALLO_OWNER role to a new address.
+    /// @dev Callable by the current ALLO_OWNER. Emits standard AccessControl
+    ///      `RoleGranted` and `RoleRevoked` events. Used during the migration
+    ///      from a deployer EOA to the protocol timelock/multisig.
+    /// @param _newOwner The address to receive the ALLO_OWNER role.
+    function transferAlloOwner(address _newOwner) external onlyRole(ALLO_OWNER) {
+        if (_newOwner == address(0)) revert ZERO_ADDRESS();
+
+        _grantRole(ALLO_OWNER, _newOwner);
+        _revokeRole(ALLO_OWNER, msg.sender);
     }
 
     /// ====================================

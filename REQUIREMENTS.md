@@ -43,3 +43,13 @@
 - **AC-FACADE-004:** `initializeCampaign` reverte se o caller não for owner/member do perfil ou se a Facade não for membro do perfil.
 - **AC-FACADE-005:** `addPoolManager`/`removePoolManager` revertem para quem não é owner do perfil dono do pool.
 - **AC-FACADE-006:** `fundPool` via Facade puxa ERC-20 do caller e zera allowance.
+
+## Governança multisig/timelock (SEC-005 / SEC-009)
+
+- **AC-GOV-001:** `AlloTimelockController` impõe delay mínimo de 48 horas (17.280 blocos ou `2 days`); proposer, executor e canceller únicos são o `AlloMultisigWallet`.
+- **AC-GOV-002:** `AlloMultisigWallet` exige `threshold` confirmações entre `signers` para submeter, confirmar e executar transações; signers/threshold só podem ser alterados por transação aprovada pelo próprio wallet.
+- **AC-GOV-003:** Após o deploy, o deployer inicial renuncia `TIMELOCK_ADMIN_ROLE`, tornando o timelock auto-administrado.
+- **AC-GOV-004:** `transferOwnershipToGovernance.ts` transfere `Allo.owner()`, `Registry.ALLO_OWNER` e a propriedade do `ProxyAdmin` para o timelock em uma única execução verificável.
+- **AC-GOV-005:** `upgradeAlloViaGovernance.ts` prepara a nova implementação, valida storage layout e agenda uma única operação `ProxyAdmin.upgradeAndCall(..., initializeGoFPatterns)` no timelock.
+- **AC-GOV-006:** Scripts de governança leem a chave do signatário da variável de ambiente (`GOV_SIGNER_PRIVATE_KEY` ou `DEPLOYER_PRIVATE_KEY`), nunca de argumento de linha de comando, e imprimem `transactionId` e `operationId` para rastreabilidade.
+- **AC-GOV-007:** Operações agendadas podem ser canceladas pelo multisig antes da execução, e a execução só é possível após `getMinDelay()`.

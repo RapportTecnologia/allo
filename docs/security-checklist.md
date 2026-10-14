@@ -1,8 +1,8 @@
 # Checklist de segurança dos smart contracts
 
-**Última revisão:** 2026-10-13  
+**Última revisão:** 2026-10-14
 **Responsável:** Devin  
-**Escopo:** Allo V2, branch `refatoracao-gof` e revisão `refatoracao-gof-revisao`
+**Escopo:** Allo V2, branch `refatoracao-gof` e revisão `refatoracao-gof-revisao`, `refatoracao-gof-revisao-facade` e `refatoracao-gof-revisao-multisig-dao`
 
 ## Modelo de ameaça
 
@@ -20,7 +20,10 @@ Os contratos core controlam pools, taxas, tesouraria, perfis e execução de str
 
 ### 3. Controle de acesso
 - [x] Setters GoF são `onlyOwner`; a migração não recebe parâmetros e é protegida por `reinitializer(2)` — 2026-10-13, Devin.
-- [ ] Adotar multisig, timelock e transferência administrativa em duas etapas.
+- [x] Adotar multisig, timelock e transferência administrativa para o timelock — 2026-10-14, Devin.
+  * `AlloTimelockController` exige delay mínimo de 48h.
+  * `AlloMultisigWallet` exige M-of-N confirmações.
+  * `transferOwnershipToGovernance.ts` transfere Allo, Registry ALLO_OWNER e ProxyAdmin para o timelock.
 
 ### 4. Autenticação e assinaturas
 - [x] Não foi adicionada autenticação por `tx.origin` — 2026-10-13, Devin.
@@ -76,7 +79,8 @@ Os contratos core controlam pools, taxas, tesouraria, perfis e execução de str
 
 ### 18. Eventos e auditoria
 - [x] Troca de dependências emite eventos existentes — 2026-10-13, Devin.
-- [ ] Adicionar evento explícito de migração/upgrade na governança operacional.
+- [x] Governança emite eventos de submissão, confirmação, execução e cancelamento no `AlloMultisigWallet`; timelock emite `CallScheduled`/`CallExecuted`/`Cancelled` — 2026-10-14, Devin.
+- [ ] Adicionar evento de migração/upgrade específico do protocolo em futura iteração.
 
 ### 19. Contratos upgradeable
 - [x] Novos slots estão no final; reinitializer V2 é single-use e o script usa validação de layout + upgrade atômico — 2026-10-13, Devin.
@@ -91,7 +95,8 @@ Os contratos core controlam pools, taxas, tesouraria, perfis e execução de str
 
 ### 22. Testes automatizados
 - [x] Testes de regressão foram adicionados para EOA, taxa excessiva e migração única — 2026-10-13, Devin.
-- [ ] Executar suíte, cobertura >=90% core e cenários de upgrade/reentrância.
+- [x] Testes de governança adicionados: multisig (13 casos), timelock (6 casos) e integração Allo/Registry/timelock (4 casos) — 2026-10-14, Devin.
+- [ ] Executar suíte completa, cobertura >=90% core e cenários de upgrade/reentrância.
 
 ### 23. Fuzzing e invariantes
 - [x] Invariantes financeiras e de migração foram documentadas — 2026-10-13, Devin.
@@ -105,9 +110,9 @@ Os contratos core controlam pools, taxas, tesouraria, perfis e execução de str
 
 1. Migração segura de proxy e storage layout.
 2. Avaliar trust residual da Facade (POOL_ADMIN_ROLE gated pelo owner do perfil).
-3. Multisig e timelock para owner.
+3. ~~Multisig e timelock para owner~~ → implementado em `refatoracao-gof-revisao-multisig-dao`.
 4. Reentrância e plugins externos.
-5. Testes de invariantes, fuzzing e cobertura.
+5. Testes de invariantes, fuzzing, cobertura e análise estática (Slither/Mythril/Echidna).
 
 ## Histórico
 
@@ -115,3 +120,4 @@ Os contratos core controlam pools, taxas, tesouraria, perfis e execução de str
 |---|---|---|
 | 2026-10-13 | Devin | Auditoria inicial comparativa e registro das mitigações GoF. |
 | 2026-10-13 | Devin | Aplicação das regras de DAO/deploy: upgrade atômico, validações de scripts, Facade abstrata e runbook. |
+| 2026-10-14 | Devin | Implementação da governança multisig/timelock (SEC-005/SEC-009): contratos, scripts, testes e tutorial. |

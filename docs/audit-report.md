@@ -2,14 +2,14 @@
 
 **Data:** 2026-10-13  
 **Analista:** Devin  
-**Escopo:** `main`, `origin/refatoracao-gof` e correções em `refatorcao-gof-revisao`/`refatoracao-gof-revisao-facade`
+**Escopo:** `main`, `origin/refatoracao-gof` e correções em `refatorcao-gof-revisao`, `refatoracao-gof-revisao-facade` e `refatoracao-gof-revisao-multisig-dao`
 **Atualização:** 2026-10-14 — toolchain restaurada, suíte completa executada (1151 testes), Slither executado e SEC-002 corrigido no branch da Facade
 
 ## Resumo executivo
 
 O branch `main` preserva o comportamento original, mas mantém riscos operacionais já existentes, incluindo administração concentrada, ausência de pausa/timelock no contrato core e uso de uma versão antiga do compilador. O branch `refatoracao-gof` melhora separação de responsabilidades com Strategy, Factory, Facade e State, porém introduziu dois bloqueadores de upgrade e integração.
 
-Status da revisão: **em mitigação**. As correções de inicialização pós-upgrade, validação de dependências, limite de taxa e scripts de deploy/upgrade foram aplicadas. A Facade foi redesenhada no branch `refatoracao-gof-revisao-facade` como operador policy-bound: o usuário continua owner do perfil, recebe a role de manager do pool e paga os ativos; a Facade imutável retém a role de admin do pool, exercível apenas por funções restritas ao owner do perfil.
+Status da revisão: **em mitigação**. As correções de inicialização pós-upgrade, validação de dependências, limite de taxa, scripts de deploy/upgrade e a Facade foram aplicadas. O branch `refatoracao-gof-revisao-multisig-dao` introduz a governança on-chain: timelock de 48h, multisig M-of-N como proposer/executor/canceller e transferência de `Allo`, `Registry` e `ProxyAdmin` para o timelock. A administração crítica deixa de depender de uma única EOA.
 
 ## Comparação
 
@@ -31,7 +31,7 @@ Status da revisão: **em mitigação**. As correções de inicialização pós-u
 | AUD-003 | Alta | `contracts/core/Allo.sol` | Fee Strategy arbitrária podia retornar valor maior que o aporte, causando underflow/DoS sem erro de domínio claro. | Mitigado com `INVALID_FEE`. |
 | AUD-004 | Média | `contracts/core/Allo.sol` | Endereços de Strategy/Factory aceitavam EOAs. | Mitigado com validação de bytecode. |
 | AUD-005 | Média | configuração | Toolchain quebrada (PATH do Forge, Node 18, remappings e peer deps). | Corrigido: Forge, Hardhat e Slither executam; `.nvmrc` fixa Node 22. |
-| AUD-006 | Média | governança | Atualizações críticas dependem de owner único, sem multisig/timelock on-chain imposto pelo contrato. | Aberto; requisito de deploy/governança. |
+| AUD-006 | Média | governança | Atualizações críticas dependem de owner único, sem multisig/timelock on-chain imposto pelo contrato. | Mitigado: `AlloTimelockController` (48h) + `AlloMultisigWallet` (M-of-N) com transferência de Allo/Registry/ProxyAdmin. |
 | AUD-007 | Baixa | documentação | `git diff --check` encontrou whitespace e ausência de newline em arquivos do branch GoF. | Aberto, sem impacto de runtime. |
 | AUD-008 | Alta | `scripts/core/upgrades/upgradeAllo.ts` | Upgrade não executava a migração GoF, deixando duas transações e uma janela de indisponibilidade. | Mitigado com `validateUpgrade` e `upgradeAndCall` atômico. |
 | AUD-009 | Alta | `scripts/core/upgrades/upgradeRegistry.ts` | Script de Registry carregava `deployments.getAllo()`, podendo atualizar o proxy errado. | Mitigado com `getRegistry()` e validação de storage. |
@@ -48,12 +48,15 @@ Status da revisão: **em mitigação**. As correções de inicialização pós-u
 7. Validação de saldo, endereços e bytecode nos deploys core.
 8. Facade redesenhada como operador policy-bound com testes dedicados (14 casos).
 9. Checklist, requisitos e runbook de deploy adicionados.
+10. Governança on-chain implementada: timelock 48h, multisig M-of-N, transferência de Allo/Registry/ProxyAdmin e scripts de proposta/upgrade via governança.
 
 ## Invariantes revisadas
 
 - A taxa cobrada nunca excede o valor financiado.
 - A soma de taxa e valor líquido corresponde ao aporte, ressalvados tokens fee-on-transfer já medidos por saldo.
 - Apenas o owner altera dependências de cálculo/criação.
+- O owner de Allo, o papel ALLO_OWNER do Registry e o ProxyAdmin devem ser o timelock após a ativação da governança.
+- Qualquer ação administrativa passa por M-of-N confirmações e 48h de timelock.
 - Uma migração GoF só pode ser inicializada uma vez.
 - Uma strategy criada deve continuar passando as verificações de `poolId` e `Allo` existentes.
 
@@ -63,7 +66,8 @@ Status da revisão: **em mitigação**. As correções de inicialização pós-u
 - Avaliar trust residual da Facade (retém `POOL_ADMIN_ROLE` gated) antes de incluí-la nos artefatos de deploy.
 - Executar `forge build --sizes`, `forge test`, cobertura, Slither, Mythril e Echidna.
 - Validar storage layout contra a implementação implantada.
-- Transferir owner para multisig com timelock mínimo de 48 horas.
+- Transferir owner para multisig com timelock mínimo de 48 horas (scripts `deployGovernance.ts` e `transferOwnershipToGovernance.ts` prontos).
+- Executar o fluxo completo de governança em testnet antes de mainnet.
 - Obter auditoria externa independente antes de mainnet.
 
 ## Evidência de comandos
@@ -71,8 +75,9 @@ Status da revisão: **em mitigação**. As correções de inicialização pós-u
 - `git diff --check main...origin/refatoracao-gof`: falhou por whitespace documental.
 - `forge build`: sucesso (219 arquivos, Solc 0.8.19).
 - `npx hardhat compile`: sucesso (178 arquivos, Node v22.22.3).
-- `forge test --no-match-contract '(Lockup|SQF)'`: **1151 testes, 0 falhas**.
+- `forge test --no-match-contract '(Lockup|SQF)'`: **1188 testes, 0 falhas** (branch multisig-dao).
 - `forge test` Facade/GoF dedicados: 14+22 casos passando.
+- `forge test --match-path "test/foundry/governance/*.t.sol"`: **23 testes, 0 falhas**.
 - `slither .`: executado; sem high/medium novo nos contratos revisados (achados remanescentes são preexistentes em `_poc`/libs).
 - `npm audit`: 120 vulnerabilidades em deps dev (3 críticas, 28 altas); documentado como SEC-010.
 - Mythril e Echidna: ferramentas indisponíveis no ambiente; limitação registrada.
