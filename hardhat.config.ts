@@ -1,6 +1,5 @@
 import * as dotenv from "dotenv";
 
-import "@nomicfoundation/hardhat-foundry";
 import "@nomicfoundation/hardhat-verify";
 import "@nomiclabs/hardhat-solhint";
 import "@openzeppelin/hardhat-upgrades";
@@ -56,11 +55,8 @@ const chainIds = {
   "hedera-mainnet": 295,
 };
 
-let deployPrivateKey = process.env.DEPLOYER_PRIVATE_KEY as string;
-if (!deployPrivateKey) {
-  // default first account deterministically created by local nodes like `npx hardhat node` or `anvil`
-  throw "No deployer private key set in .env";
-}
+const deployPrivateKey = process.env.DEPLOYER_PRIVATE_KEY;
+const deployAccounts = deployPrivateKey ? [deployPrivateKey] : [];
 
 const infuraIdKey = process.env.INFURA_RPC_ID as string;
 const alchemyIdKey = process.env.ALCHEMY_RPC_ID as string;
@@ -94,7 +90,7 @@ function createTestnetConfig(
     url = `https://${network}.infura.io/v3/${infuraIdKey}`;
   }
   return {
-    accounts: [deployPrivateKey],
+    accounts: deployAccounts,
     chainId: chainIds[network],
     allowUnlimitedContractSize: true,
     url,
@@ -116,7 +112,7 @@ function createMainnetConfig(
     url = `https://${network}.infura.io/v3/${infuraIdKey}`;
   }
   return {
-    accounts: [deployPrivateKey],
+    accounts: deployAccounts,
     chainId: chainIds[network],
     url,
   };
