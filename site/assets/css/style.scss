@@ -1,4 +1,5 @@
 ---
 ---
 
-@use "rapport";
+// Compatibilidade com o Sass do Jekyll 3 usado pelo GitHub Pages.
+@import "rapport";
