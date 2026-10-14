@@ -3,35 +3,38 @@ layout: home
 show_title: false
 hero:
   title: "ALLO Protocol"
-  subtitle: "Documentação da versão acadêmica refatorada com padrões de projeto GoF, multisig e timelock on-chain."
+  subtitle: "Resumo do fork acadêmico com padrões de projeto GoF, multisig e timelock on-chain."
   buttons:
+    - label: "Documentação completa"
+      url: "https://rapport.tec.br/allo-docs/"
+      primary: true
     - label: "Conheça a história"
       url: "/historia/"
-      primary: true
-    - label: "Como usar"
-      url: "/uso/"
       primary: false
 ---
 
 <section class="section">
-  <p class="eyebrow">CONHEÇA, EXPLORE, CONSTRUA</p>
+  <p class="eyebrow">CONHEÇA, EXPLORE, APROFUNDE</p>
   <h2 class="section-title">O que é o ALLO?</h2>
   <p class="section-lead">
     O <strong>Allo Protocol</strong> é um conjunto de smart contracts da <a href="https://www.gitcoin.co/" target="_blank" rel="noopener">Gitcoin</a> para alocação e distribuição descentralizada de fundos na Ethereum. Ele oferece registro de perfis (Registry), execução segura de chamadas externas (Anchor) e gestão de pools com estratégias customizáveis (Allo).
   </p>
   <p>
-    Esta documentação descreve o <strong>fork acadêmico ALLO-v2</strong> produzido como trabalho da disciplina <em>QXD0068 — Reuso de Software</em> (UFC Quixadá), que aplica padrões GoF para reduzir acoplamento, aumentar a coesão e introduzir uma camada de governança segura. O trabalho foi revisado de forma independente por <strong>Carlos Delfino</strong>, aplicando critérios de auditoria desenvolvidos em seus estudos sobre <em>Smart Contracts com Inteligência Artificial Generativa</em> usando agentes de codificação com a ferramenta <strong>Devin</strong>. Todo o código foi revisado e auditado, produzindo ajustes que aumentaram a segurança e a usabilidade dos contratos conforme o modelo proposto pelo Engenheiro <strong>Francisco Josias da Silva Batista</strong>.
+    Esta página é o <strong>ponto de entrada</strong> do fork acadêmico <strong>ALLO-v2</strong>, produzido como trabalho da disciplina <em>QXD0068 — Reuso de Software</em> (UFC Quixadá). Aqui você encontra um resumo da história, da arquitetura, da governança DAO e dos principais recursos de segurança.
+  </p>
+  <p>
+    <strong>Quer se aprofundar no protocolo?</strong> A documentação técnica completa — com referências detalhadas de contratos, fluxos e guias — está disponível em <a href="https://rapport.tec.br/allo-docs/" target="_blank" rel="noopener">rapport.tec.br/allo-docs</a>.
   </p>
 </section>
 
 <section class="section">
-  <p class="eyebrow">SEU PRÓXIMO PASSO</p>
+  <p class="eyebrow">RESUMO DOS TEMAS</p>
   <h2 class="section-title">Por onde você quer começar?</h2>
-  <p class="section-lead">Do primeiro contato ao código: encontre seu caminho no ALLO.</p>
+  <p class="section-lead">Navegue pelos resumos ou vá direto para a documentação completa.</p>
   <div class="card-grid">
     <div class="card">
       <h3 class="text-brand">📜 História</h3>
-      <p>Origem no Allo Protocol V2, motivação acadêmica e evolução para uma arquitetura com padrões de projeto.</p>
+      <p>Origem no Allo Protocol V2, motivação acadêmica, revisão independente e evolução para uma arquitetura com padrões de projeto.</p>
       <a href="{{ "/historia/" | relative_url }}" class="btn-secondary">Ler história</a>
     </div>
     <div class="card">
@@ -63,6 +66,17 @@ hero:
 </section>
 
 <section class="section">
+  <p class="eyebrow">DOCUMENTAÇÃO COMPLETA</p>
+  <h2 class="section-title">Aprofunde-se no Allo Protocol</h2>
+  <p>
+    Esta página oferece uma visão geral. Para a documentação técnica completa — incluindo referências de API dos contratos, fluxos detalhados, guias de deploy e upgrade — acesse:
+  </p>
+  <p class="text-center">
+    <a class="btn-primary" href="https://rapport.tec.br/allo-docs/" target="_blank" rel="noopener">Abrir documentação completa ↗</a>
+  </p>
+</section>
+
+<section class="section">
   <p class="eyebrow">POR DENTRO DO PROTOCOLO</p>
   <h2 class="section-title">Uma base para construir juntos</h2>
   <ul class="technical-list">
@@ -76,6 +90,6 @@ hero:
 
 <div class="cta-strip">
   <h2>Pronto para mergulhar no código?</h2>
-  <p>O repositório original está no GitHub da Gitcoin; o fork acadêmico mantém a mesma base com as refatorações documentadas aqui.</p>
+  <p>O repositório do fork acadêmico está no GitHub da Rapport Tecnologia.</p>
   <a class="btn-primary" href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">Abrir repositório no GitHub ↗</a>
 </div>
