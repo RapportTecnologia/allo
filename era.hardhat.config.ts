@@ -13,7 +13,6 @@ import "hardhat-contract-sizer";
 import "hardhat-gas-reporter";
 import "hardhat-preprocessor";
 import { HardhatUserConfig } from "hardhat/config";
-import "solidity-coverage";
 
 dotenv.config();
 

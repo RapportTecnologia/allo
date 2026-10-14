@@ -3,10 +3,6 @@ pragma solidity ^0.8.19;
 
 import {SafeTransferLib} from "solady/utils/SafeTransferLib.sol";
 import {ReentrancyGuard} from "openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
-import {
-    IAccessControlUpgradeable
-} from "openzeppelin-contracts-upgradeable/contracts/access/IAccessControlUpgradeable.sol";
-
 // Importing the necessary interfaces and structs from the Allo Protocol
 import "./interfaces/IRegistry.sol";
 import "./interfaces/IAllo.sol";
@@ -32,6 +28,12 @@ import "./libraries/Native.sol";
 ///      - The profile owner may remove this contract from the profile members at any time via
 ///        'Registry.removeMembers'; this only blocks future pool creation, since the admin
 ///        functions remain bound to profile ownership.
+/// @dev Minimal slice of OpenZeppelin 'IAccessControl' used to grant the pool manager role.
+interface IPoolAccessControl {
+    function grantRole(bytes32 role, address account) external;
+    function hasRole(bytes32 role, address account) external view returns (bool);
+}
+
 contract AlloStarterFacade is Errors, Native, ReentrancyGuard {
     IRegistry public immutable registry;
     IAllo public immutable allo;
@@ -79,7 +81,7 @@ contract AlloStarterFacade is Errors, Native, ReentrancyGuard {
 
         // The caller receives the manager role; the admin role remains on this contract and is
         // only reachable through the profile-owner-gated functions below.
-        IAccessControlUpgradeable(address(allo)).grantRole(bytes32(poolId), msg.sender);
+        IPoolAccessControl(address(allo)).grantRole(bytes32(poolId), msg.sender);
 
         emit CampaignInitialized(_profileId, poolId, msg.sender);
     }

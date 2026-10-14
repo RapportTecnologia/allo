@@ -4,12 +4,9 @@ pragma solidity ^0.8.19;
 import "forge-std/Test.sol";
 
 // Interfaces
-import {
-    IAccessControlUpgradeable
-} from "openzeppelin-contracts-upgradeable/contracts/access/IAccessControlUpgradeable.sol";
 import {IAllo} from "../../../contracts/core/interfaces/IAllo.sol";
 // Core contracts
-import {AlloStarterFacade} from "../../../contracts/core/AlloStarterFacade.sol";
+import {AlloStarterFacade, IPoolAccessControl} from "../../../contracts/core/AlloStarterFacade.sol";
 // Internal Libraries
 import {Errors} from "../../../contracts/core/libraries/Errors.sol";
 import {Metadata} from "../../../contracts/core/libraries/Metadata.sol";
@@ -103,7 +100,7 @@ contract AlloStarterFacadeTest is Test, AlloSetup, RegistrySetupFull, Native, Er
         assertNotEq(address(pool.strategy), address(0));
 
         // The caller holds the manager role; the admin role is held by the facade
-        IAccessControlUpgradeable access = IAccessControlUpgradeable(address(allo()));
+        IPoolAccessControl access = IPoolAccessControl(address(allo()));
         bytes32 managerRole = bytes32(poolId);
         bytes32 adminRole = keccak256(abi.encodePacked(poolId, "admin"));
         assertTrue(access.hasRole(managerRole, pool_admin()));
@@ -180,7 +177,7 @@ contract AlloStarterFacadeTest is Test, AlloSetup, RegistrySetupFull, Native, Er
         vm.prank(pool_admin());
         uint256 poolId = facade.initializeCampaign(profileId, strategy, "0x", NATIVE, 0, metadata, pool_managers());
 
-        IAccessControlUpgradeable access = IAccessControlUpgradeable(address(allo()));
+        IPoolAccessControl access = IPoolAccessControl(address(allo()));
         address newManager = makeAddr("newManager");
 
         vm.prank(pool_admin());
@@ -194,7 +191,7 @@ contract AlloStarterFacadeTest is Test, AlloSetup, RegistrySetupFull, Native, Er
         vm.prank(pool_admin());
         uint256 poolId = facade.initializeCampaign(profileId, strategy, "0x", NATIVE, 0, metadata, pool_managers());
 
-        IAccessControlUpgradeable access = IAccessControlUpgradeable(address(allo()));
+        IPoolAccessControl access = IPoolAccessControl(address(allo()));
 
         vm.prank(pool_admin());
         facade.removePoolManager(poolId, pool_manager1());
