@@ -24,7 +24,7 @@ Os contratos core controlam pools, taxas, tesouraria, perfis e execução de str
 
 ### 4. Autenticação e assinaturas
 - [x] Não foi adicionada autenticação por `tx.origin` — 2026-10-13, Devin.
-- [ ] Redesenhar Facade com EIP-712/ERC-1271, nonce, deadline, chainId e endereço do contrato.
+- [x] Facade redesenhada preservando identidade (SEC-002); confiança residual documentada (branch `refatoracao-gof-revisao-facade`).
 
 ### 5. Cadastro e inscrição de usuários
 - [x] Registry e autorização de perfil foram revisados no fluxo alterado — 2026-10-13, Devin.
@@ -104,7 +104,7 @@ Os contratos core controlam pools, taxas, tesouraria, perfis e execução de str
 ## Prioridades do projeto
 
 1. Migração segura de proxy e storage layout.
-2. Bloqueio/redesign da Facade.
+2. Avaliar trust residual da Facade (POOL_ADMIN_ROLE gated pelo owner do perfil).
 3. Multisig e timelock para owner.
 4. Reentrância e plugins externos.
 5. Testes de invariantes, fuzzing e cobertura.

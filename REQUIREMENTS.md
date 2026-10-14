@@ -5,7 +5,7 @@
 - **SC-ARCH-001:** Allo deve calcular taxas por `IFeeStrategy` e criar clones por `IStrategyFactory`, validando que dependências configuradas possuem bytecode.
 - **SC-ARCH-002:** Uma taxa calculada nunca pode exceder o valor financiado.
 - **SC-ARCH-003:** O State pattern de Direct Grants Lite deve preservar as fronteiras temporais e o comportamento legado de registro, alocação e distribuição.
-- **SC-ARCH-004:** `AlloStarterFacade` deve permanecer não implantável enquanto não houver autorização autenticada que preserve o usuário como administrador do pool e pagador dos ativos.
+- **SC-ARCH-004:** `AlloStarterFacade` deve preservar a identidade do usuário: o usuário permanece owner do perfil, recebe a role de manager do pool e paga os ativos; a Facade só exerce a role de admin do pool via funções restritas ao owner do perfil.
 
 ## Upgrade
 
@@ -36,4 +36,10 @@
 - **AC-GOF-003:** Migração GoF executada pelo caminho de Proxy Admin configura dependências e segunda execução reverte.
 - **AC-GOF-004:** `upgradeAllo.ts` valida storage e executa migração na mesma transação.
 - **AC-GOF-005:** `upgradeRegistry.ts` usa o endereço do Registry, não o endereço do Allo.
-- **AC-GOF-006:** Facade acadêmica não gera bytecode implantável.
+- **AC-GOF-006:** Facade redesenhada como operador policy-bound: deployável, porém sem privilégio discricionário.
+- **AC-FACADE-001:** `initializeCampaign` preserva identidade: usuário é owner do perfil, recebe `POOL_MANAGER_ROLE`; admin do pool fica na Facade imutável.
+- **AC-FACADE-002:** Financiamento ERC-20 puxa exatamente `_amount` do usuário e zera a allowance do Allo ao final.
+- **AC-FACADE-003:** ETH é encaminhado 1:1 via `msg.value` (baseFee e/ou funding nativo).
+- **AC-FACADE-004:** `initializeCampaign` reverte se o caller não for owner/member do perfil ou se a Facade não for membro do perfil.
+- **AC-FACADE-005:** `addPoolManager`/`removePoolManager` revertem para quem não é owner do perfil dono do pool.
+- **AC-FACADE-006:** `fundPool` via Facade puxa ERC-20 do caller e zera allowance.
