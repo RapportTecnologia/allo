@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="language" content="pt-BR">
+<meta name="author" content="Rapport Tecnologia">
+
+<meta name="keywords" content="ALLO Protocol, Allo Protocol V2, Gitcoin, Ethereum, smart contracts, DeFi, alocação descentralizada, governança DAO, multisig, timelock, padrões de projeto GoF, Solidity, Rapport Tecnologia">
+
+
+<meta name="description" content="Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores.">
+
+<link rel="canonical" href="https://rapport.tec.br/allo/">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="ALLO Protocol" />
+<meta name="author" content="Rapport Tecnologia" />
+<meta property="og:locale" content="pt_BR" />
+<meta name="description" content="Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores." />
+<meta property="og:description" content="Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores." />
+<link rel="canonical" href="https://rapport.tec.br/allo/" />
+<meta property="og:url" content="https://rapport.tec.br/allo/" />
+<meta property="og:site_name" content="ALLO Protocol" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="ALLO Protocol" />
+<meta name="twitter:site" content="@rapport_tec" />
+<meta name="twitter:creator" content="@rapport_tec" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"Rapport Tecnologia"},"description":"Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores.","headline":"ALLO Protocol","name":"Rapport Tecnologia","sameAs":["https://twitter.com/rapport_tec","https://github.com/RapportTecnologia","https://rapport.tec.br"],"url":"https://rapport.tec.br/allo/"}</script>
+<!-- End Jekyll SEO tag -->
+
+<title>ALLO Protocol</title>
+<link rel="stylesheet" href="/allo/assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/allo/assets/images/favicon.svg">
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/allo/sitemap.xml">
+
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <header class="site-header">
+  <div class="wrapper">
+    <a class="site-title" href="/allo/">
+      <span class="site-logo" aria-hidden="true">a.</span>
+      <span>ALLO Protocol<small>por Rapport Tecnologia</small></span>
+    </a>
+    <nav class="site-nav" aria-label="Navegação principal">
+      <button type="button" class="nav-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navigation">
+        <span class="menu-icon"></span>
+      </button>
+      <div class="nav-menu" id="navigation">
+        <a class="nav-link active" href="/allo/">Início</a>
+        <a class="nav-link" href="/allo/historia/">História</a>
+        <a class="nav-link" href="/allo/arquitetura/">Arquitetura</a>
+        <a class="nav-link" href="/allo/dao/">DAO</a>
+        <a class="nav-link" href="/allo/uso/">Como Usar</a>
+        <a class="nav-link" href="/allo/contribuir/">Contribuir</a>
+        <a class="nav-link" href="https://rapport.tec.br/allo-docs/" target="_blank" rel="noopener">Docs ↗</a>
+        <a class="nav-link nav-cta" href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const nav = document.querySelector('.nav-menu');
+  function closeMenu() {
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir menu');
+    nav.classList.remove('is-open');
+  }
+  toggle.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') !== 'true';
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    nav.classList.toggle('is-open', open);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      closeMenu(); toggle.focus();
+    }
+  });
+  nav.addEventListener('click', event => { if (event.target.closest('a')) closeMenu(); });
+</script>
+
+  <main id="conteudo" tabindex="-1" class="page-content" aria-label="Conteúdo">
+    <div class="home">
+  
+  <section class="hero">
+    <div class="wrapper hero-grid">
+      <div class="hero-content">
+        <p class="eyebrow">RAPPORT TECNOLOGIA · ALLO V2</p>
+        <h1>ALLO Protocol</h1>
+        <p class="hero-heading">Boas ideias merecem <span>ganhar vida.</span></p>
+        
+          <p class="hero-subtitle">Resumo do fork acadêmico com padrões de projeto GoF, multisig e timelock on-chain.</p>
+        
+        
+          <div class="hero-buttons">
+            
+              <a class="btn-primary" href="https://rapport.tec.br/allo-docs/">Documentação completa</a>
+            
+              <a class="btn-secondary" href="/allo/historia/">Conheça a história</a>
+            
+          </div>
+        
+        <p class="hero-note">Código aberto. Conhecimento compartilhado. Construção coletiva.</p>
+      </div>
+      <div class="hero-visual" aria-label="Da comunidade aos projetos: perfis, pools e estratégias de alocação">
+        <span class="visual-label">CONEXÕES QUE GERAM IMPACTO</span>
+        <div class="visual-node node-community"><span aria-hidden="true">◎</span> Comunidade<small>Ideias e colaboração</small></div>
+        <div class="visual-core"><span>allo<span class="core-dot">.</span></span><small>Conectando recursos<br>e possibilidades</small></div>
+        <div class="visual-node node-pools"><span aria-hidden="true">◈</span> Pools<small>Recursos reunidos</small></div>
+        <div class="visual-node node-projects"><span aria-hidden="true">✳</span> Projetos<small>Impacto na prática</small></div>
+        <div class="visual-caption">Perfis <span>→</span> Pools <span>→</span> Alocação</div>
+      </div>
+    </div>
+  </section>
+  <div class="principles"><div class="wrapper"><span>Desenvolvido para aprender e construir</span><strong>01 / Código aberto</strong><strong>02 / Governança coletiva</strong><strong>03 / Arquitetura modular</strong></div></div>
+  
+
+  <div class="wrapper">
+    <section class="section">
+  <p class="eyebrow">CONHEÇA, EXPLORE, APROFUNDE</p>
+  <h2 class="section-title">O que é o ALLO?</h2>
+  <p class="section-lead">
+    O <strong>Allo Protocol</strong> é um conjunto de smart contracts da <a href="https://www.gitcoin.co/" target="_blank" rel="noopener">Gitcoin</a> para alocação e distribuição descentralizada de fundos na Ethereum. Ele oferece registro de perfis (Registry), execução segura de chamadas externas (Anchor) e gestão de pools com estratégias customizáveis (Allo).
+  </p>
+  <p>
+    Esta página é o <strong>ponto de entrada</strong> do fork acadêmico <strong>ALLO-v2</strong>, produzido como trabalho da disciplina <em>QXD0068 — Reuso de Software</em> (UFC Quixadá). Aqui você encontra um resumo da história, da arquitetura, da governança DAO e dos principais recursos de segurança.
+  </p>
+  <p>
+    <strong>Quer se aprofundar no protocolo?</strong> A documentação técnica completa — com referências detalhadas de contratos, fluxos e guias — está disponível em <a href="https://rapport.tec.br/allo-docs/" target="_blank" rel="noopener">rapport.tec.br/allo-docs</a>.
+  </p>
+</section>
+
+<section class="section">
+  <p class="eyebrow">RESUMO DOS TEMAS</p>
+  <h2 class="section-title">Por onde você quer começar?</h2>
+  <p class="section-lead">Navegue pelos resumos ou vá direto para a documentação completa.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h3 class="text-brand">📜 História</h3>
+      <p>Origem no Allo Protocol V2, motivação acadêmica, revisão independente e evolução para uma arquitetura com padrões de projeto.</p>
+      <a href="/allo/historia/" class="btn-secondary">Ler história</a>
+    </div>
+    <div class="card">
+      <h3 class="text-brand">🏛️ Governança DAO</h3>
+      <p>Entenda o funcionamento do timelock de 48 horas, da multisig M-of-N e do ciclo de propostas.</p>
+      <a href="/allo/dao/" class="btn-secondary">Ver DAO</a>
+    </div>
+    <div class="card">
+      <h3 class="text-brand">🛠️ Como Usar</h3>
+      <p>Instalação, compilação, testes, deploy dos contratos core e criação de pools.</p>
+      <a href="/allo/uso/" class="btn-secondary">Ver instruções</a>
+    </div>
+    <div class="card">
+      <h3 class="text-brand">🤝 Contribuir</h3>
+      <p>Guia de fork, fluxo de trabalho, padrões de código e checklist de segurança para pull requests.</p>
+      <a href="/allo/contribuir/" class="btn-secondary">Quero contribuir</a>
+    </div>
+    <div class="card">
+      <h3 class="text-brand">◈ Arquitetura</h3>
+      <p>Conheça os contratos, suas conexões e os padrões de projeto que organizam o protocolo.</p>
+      <a href="/allo/arquitetura/" class="btn-secondary">Explorar arquitetura</a>
+    </div>
+    <div class="card">
+      <h3 class="text-brand">◎ Segurança</h3>
+      <p>Explore as proteções, os controles de acesso e as práticas de segurança do projeto.</p>
+      <a href="/allo/seguranca/" class="btn-secondary">Entender as proteções</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <p class="eyebrow">DOCUMENTAÇÃO COMPLETA</p>
+  <h2 class="section-title">Aprofunde-se no Allo Protocol</h2>
+  <p>
+    Esta página oferece uma visão geral. Para a documentação técnica completa — incluindo referências de API dos contratos, fluxos detalhados, guias de deploy e upgrade — acesse:
+  </p>
+  <p class="text-center">
+    <a class="btn-primary" href="https://rapport.tec.br/allo-docs/" target="_blank" rel="noopener">Abrir documentação completa ↗</a>
+  </p>
+</section>
+
+<section class="section">
+  <p class="eyebrow">POR DENTRO DO PROTOCOLO</p>
+  <h2 class="section-title">Uma base para construir juntos</h2>
+  <ul class="technical-list">
+    <li><strong>Facade:</strong> <code>AlloStarterFacade.sol</code> simplifica a criação de campanhas sem quebrar o modelo de permissões do Registry.</li>
+    <li><strong>Strategy:</strong> cálculo de taxas extraído para a interface <code>IFeeStrategy</code>, permitindo trocar algoritmos sem alterar o Allo.</li>
+    <li><strong>Factory Method:</strong> <code>StrategyFactory.sol</code> centraliza a clonagem de estratégias.</li>
+    <li><strong>State:</strong> estados de pool e alocação modelados em <code>BaseStrategy.sol</code> e estratégias derivadas.</li>
+    <li><strong>Governança:</strong> <code>AlloTimelockController</code> com delay mínimo de 48 horas e <code>AlloMultisigWallet</code> M-of-N.</li>
+  </ul>
+</section>
+
+<div class="cta-strip">
+  <h2>Pronto para mergulhar no código?</h2>
+  <p>O repositório do fork acadêmico está no GitHub da Rapport Tecnologia.</p>
+  <a class="btn-primary" href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">Abrir repositório no GitHub ↗</a>
+</div>
+
+  </div>
+</div>
+
+  </main>
+  <footer class="site-footer">
+  <div class="wrapper">
+    <div class="footer-grid">
+      <div>
+        <h3 class="footer-brand">ALLO Protocol</h3>
+        <p class="footer-tagline">Alocação e Distribuição Descentralizada de Fundos</p>
+      </div>
+      <div>
+        <h4>Links</h4>
+        <ul class="footer-links">
+          <li><a href="/allo/">Início</a></li>
+          <li><a href="/allo/historia/">História</a></li>
+          <li><a href="/allo/arquitetura/">Arquitetura</a></li>
+          <li><a href="/allo/dao/">Governança DAO</a></li>
+          <li><a href="/allo/uso/">Como Usar</a></li>
+          <li><a href="/allo/seguranca/">Segurança</a></li>
+          <li><a href="/allo/contribuir/">Contribuir</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Fontes</h4>
+        <ul class="footer-links">
+          <li><a href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">Fork Acadêmico ↗</a></li>
+          <li><a href="https://github.com/allo-protocol/allo-v2" target="_blank" rel="noopener">Allo Protocol V2 ↗</a></li>
+          <li><a href="https://docs.allo.gitcoin.co/" target="_blank" rel="noopener">Documentação Allo ↗</a></li>
+          <li><a href="https://rapport.tec.br" target="_blank" rel="noopener">Rapport Tecnologia ↗</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>
+        &copy; 2026 Rapport Tecnologia.
+        Conteúdo baseado no <a href="https://github.com/allo-protocol/allo-v2" target="_blank" rel="noopener">Allo Protocol V2</a> (Gitcoin, AGPL-3.0)
+        e no trabalho acadêmico de <strong>Francisco Josias da Silva Batista</strong>.
+      </p>
+    </div>
+  </div>
+</footer>
+
+  <script type="module">
+    const blocks = [...document.querySelectorAll('pre code.language-mermaid')];
+    if (blocks.length) {
+      try {
+        const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'strict',
+          theme: 'base',
+          fontFamily: 'Inter, Arial, sans-serif',
+          flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'linear' },
+          themeVariables: {
+            darkMode: false,
+            background: '#ffffff',
+            primaryColor: '#fff0e9',
+            primaryTextColor: '#222222',
+            primaryBorderColor: '#a63824',
+            secondaryColor: '#edf4ef',
+            secondaryTextColor: '#222222',
+            secondaryBorderColor: '#46634e',
+            tertiaryColor: '#f5f4f2',
+            tertiaryTextColor: '#222222',
+            tertiaryBorderColor: '#68605b',
+            lineColor: '#55515a',
+            textColor: '#222222',
+            mainBkg: '#fff0e9',
+            nodeBorder: '#a63824',
+            clusterBkg: '#f5f4f2',
+            clusterBorder: '#68605b',
+            titleColor: '#222222',
+            edgeLabelBackground: '#ffffff',
+            nodeTextColor: '#222222',
+            fontSize: '16px'
+          }
+        });
+        for (const [index, block] of blocks.entries()) {
+          try {
+            const { svg, bindFunctions } = await mermaid.render(`allo-diagram-${index}`, block.textContent);
+            const diagram = document.createElement('div');
+            diagram.className = 'mermaid';
+            diagram.tabIndex = 0;
+            diagram.setAttribute('role', 'region');
+            diagram.setAttribute('aria-label', 'Diagrama do protocolo. Use as setas para rolar horizontalmente.');
+            diagram.innerHTML = svg;
+            block.parentElement.replaceWith(diagram);
+            bindFunctions?.(diagram);
+            const hint = document.createElement('p');
+            hint.className = 'diagram-hint';
+            hint.textContent = 'Diagrama em tamanho legível. Se necessário, role na horizontal para explorar.';
+            diagram.after(hint);
+          } catch (error) {
+            console.error('Não foi possível renderizar o diagrama:', error);
+          }
+        }
+      } catch (error) {
+        console.error('Mermaid indisponível; a definição textual foi preservada.', error);
+      }
+    }
+  </script>
+</body>
+</html>

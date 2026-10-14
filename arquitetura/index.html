@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="language" content="pt-BR">
+<meta name="author" content="Rapport Tecnologia">
+
+<meta name="keywords" content="ALLO Protocol, Allo Protocol V2, Gitcoin, Ethereum, smart contracts, DeFi, alocação descentralizada, governança DAO, multisig, timelock, padrões de projeto GoF, Solidity, Rapport Tecnologia">
+
+
+<meta name="description" content="Contratos core, padrões de projeto GoF e fluxos de interação do ALLO-v2">
+
+<link rel="canonical" href="https://rapport.tec.br/allo/arquitetura/">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Arquitetura" />
+<meta name="author" content="Rapport Tecnologia" />
+<meta property="og:locale" content="pt_BR" />
+<meta name="description" content="Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores." />
+<meta property="og:description" content="Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores." />
+<link rel="canonical" href="https://rapport.tec.br/allo/arquitetura/" />
+<meta property="og:url" content="https://rapport.tec.br/allo/arquitetura/" />
+<meta property="og:site_name" content="ALLO Protocol" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Arquitetura" />
+<meta name="twitter:site" content="@rapport_tec" />
+<meta name="twitter:creator" content="@rapport_tec" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","author":{"@type":"Person","name":"Rapport Tecnologia"},"description":"Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores.","headline":"Arquitetura","url":"https://rapport.tec.br/allo/arquitetura/"}</script>
+<!-- End Jekyll SEO tag -->
+
+<title>Arquitetura | ALLO Protocol</title>
+<link rel="stylesheet" href="/allo/assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/allo/assets/images/favicon.svg">
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/allo/sitemap.xml">
+
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <header class="site-header">
+  <div class="wrapper">
+    <a class="site-title" href="/allo/">
+      <span class="site-logo" aria-hidden="true">a.</span>
+      <span>ALLO Protocol<small>por Rapport Tecnologia</small></span>
+    </a>
+    <nav class="site-nav" aria-label="Navegação principal">
+      <button type="button" class="nav-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navigation">
+        <span class="menu-icon"></span>
+      </button>
+      <div class="nav-menu" id="navigation">
+        <a class="nav-link" href="/allo/">Início</a>
+        <a class="nav-link" href="/allo/historia/">História</a>
+        <a class="nav-link active" href="/allo/arquitetura/">Arquitetura</a>
+        <a class="nav-link" href="/allo/dao/">DAO</a>
+        <a class="nav-link" href="/allo/uso/">Como Usar</a>
+        <a class="nav-link" href="/allo/contribuir/">Contribuir</a>
+        <a class="nav-link" href="https://rapport.tec.br/allo-docs/" target="_blank" rel="noopener">Docs ↗</a>
+        <a class="nav-link nav-cta" href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const nav = document.querySelector('.nav-menu');
+  function closeMenu() {
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir menu');
+    nav.classList.remove('is-open');
+  }
+  toggle.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') !== 'true';
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    nav.classList.toggle('is-open', open);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      closeMenu(); toggle.focus();
+    }
+  });
+  nav.addEventListener('click', event => { if (event.target.closest('a')) closeMenu(); });
+</script>
+
+  <main id="conteudo" tabindex="-1" class="page-content" aria-label="Conteúdo">
+    <div class="page">
+  
+  <header class="page-header">
+    <div class="wrapper">
+      <h1>Arquitetura</h1>
+      
+        <p class="page-subtitle">Contratos core, padrões de projeto GoF e fluxos de interação do ALLO-v2</p>
+      
+    </div>
+  </header>
+  
+
+  <div class="wrapper">
+    <article class="page-content-wrapper">
+      <h2 id="visão-geral">Visão geral</h2>
+
+<p>O Allo Protocol é um ecossistema sofisticado na blockchain Ethereum que permite a alocação e distribuição automatizada e descentralizada de fundos. O protocolo é composto por um conjunto de smart contracts que, em conjunto, oferecem um framework avançado para gestão de fundos, manipulação de taxas e governança.</p>
+
+<p>Esta versão (<code class="language-plaintext highlighter-rouge">ALLO-v2</code>) mantém a arquitetura original da Gitcoin e adiciona uma camada de abstração baseada em padrões de projeto GoF, além de uma estrutura de governança on-chain com multisig e timelock.</p>
+
+<h2 id="diagrama-de-arquitetura-atual">Diagrama de arquitetura atual</h2>
+
+<pre><code class="language-mermaid">flowchart TB
+    subgraph "Camada de Governança"
+        DAO["AlloMultisigWallet&lt;br/&gt;(M-of-N)"] --&gt;|propõe/executa| TLC["AlloTimelockController&lt;br/&gt;(≥ 48h delay)"]
+        TLC --&gt;|admin call| Allo
+    end
+
+    subgraph "Camada de Aplicação"
+        User["Profile Owner / Pool Manager"]
+        Facade["AlloStarterFacade&lt;br/&gt;(Facade - GoF)"]
+    end
+
+    subgraph "Camada Core"
+        Registry["Registry.sol&lt;br/&gt;(identidade &amp; perfis)"]
+        Anchor["Anchor.sol&lt;br/&gt;(enclave de execução)"]
+        Allo["Allo.sol&lt;br/&gt;(pools &amp; estratégias)"]
+    end
+
+    subgraph "Padrões de Projeto GoF"
+        FeeStrat["IFeeStrategy / FlatFeeStrategy&lt;br/&gt;(Strategy)"]
+        StratFactory["IStrategyFactory / StrategyFactory&lt;br/&gt;(Factory Method)"]
+    end
+
+    subgraph "Estratégias de Alocação"
+        BaseStrat["BaseStrategy.sol"]
+        Strategies["Estratégias concretas&lt;br/&gt;(Direct Grants, QF, etc.)"]
+    end
+
+    User --&gt;|profile management| Registry
+    Registry --&gt;|deploys| Anchor
+    User --&gt;|member list inclui Facade| Registry
+    User --&gt;|initializeCampaign| Facade
+    Facade --&gt;|createPool| Allo
+    Allo --&gt;|validate profile| Registry
+    Allo --&gt;|calculate fees| FeeStrat
+    Allo --&gt;|clone strategy| StratFactory
+    StratFactory --&gt;|instancia| Strategies
+    Allo --&gt;|invoke pool function| BaseStrat
+    PoolManager --&gt;|pool manager actions| Allo
+    PoolManager/Recipient/Allocator --&gt;|invoke strategy-specific functions| Strategies
+</code></pre>
+
+<h2 id="visão-geral-dos-contratos">Visão geral dos contratos</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Contrato</th>
+      <th>Propósito</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Registry.sol</code></td>
+      <td>Registro de perfis que oferece gestão de identidade e permissões</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Anchor.sol</code></td>
+      <td>Enclave que pode receber fundos / executar transações; gerado a partir do <code class="language-plaintext highlighter-rouge">identityId</code> e nome do perfil</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Allo.sol</code></td>
+      <td>Gerenciamento de pools; requer perfil do Registry e estratégia que implementa <code class="language-plaintext highlighter-rouge">BaseStrategy.sol</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">BaseStrategy.sol</code></td>
+      <td>Contrato abstrato que implementa <code class="language-plaintext highlighter-rouge">IStrategy.sol</code>; toda estratégia válida deve sobrescrever suas funções internas</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AlloStarterFacade.sol</code></td>
+      <td><strong>Novo</strong> — Facade (GoF) que simplifica a criação de campanhas sem quebrar o modelo de permissões</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">IFeeStrategy.sol</code> / <code class="language-plaintext highlighter-rouge">FlatFeeStrategy.sol</code></td>
+      <td><strong>Novo</strong> — Strategy (GoF) para cálculo desacoplado de taxas</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">IStrategyFactory.sol</code> / <code class="language-plaintext highlighter-rouge">StrategyFactory.sol</code></td>
+      <td><strong>Novo</strong> — Factory Method (GoF) para instanciação de estratégias</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AlloTimelockController.sol</code></td>
+      <td><strong>Novo</strong> — Timelock com delay mínimo de 48 horas para ações administrativas</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AlloMultisigWallet.sol</code></td>
+      <td><strong>Novo</strong> — Multisig M-of-N que propõe e executa operações no timelock</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="contratos-core">Contratos core</h2>
+
+<h3 id="registry-contract-registrysol">Registry Contract (<code class="language-plaintext highlighter-rouge">Registry.sol</code>)</h3>
+
+<p>O contrato <code class="language-plaintext highlighter-rouge">Registry</code> é o bloco de construção fundacional do Allo Protocol. Ele facilita a criação, atestação e gestão de perfis. Um perfil é uma entidade única que representa a identidade de um usuário dentro do protocolo. Este contrato oferece funções para consultar perfis por ID e anchor, bem como criar novos perfis com metadados personalizados, endereços de atestação e membros.</p>
+
+<p>Cada vez que um perfil gera um novo anchor (durante a criação do perfil ou quando o nome é atualizado), ocorre o deploy de um contrato <code class="language-plaintext highlighter-rouge">Anchor</code>. Esses contratos servem como ferramentas versáteis que podem receber fundos ou cumprir outros propósitos designados. Este mecanismo dinâmico permite que os perfis se envolvam em uma ampla gama de atividades dentro do protocolo, aumentando a flexibilidade e a funcionalidade em todo o ecossistema Allo.</p>
+
+<h3 id="anchor-contract-anchorsol">Anchor Contract (<code class="language-plaintext highlighter-rouge">Anchor.sol</code>)</h3>
+
+<p>O contrato <code class="language-plaintext highlighter-rouge">Anchor</code> é um componente vital que amplia as capacidades dos perfis. Ele atua como um enclave isolado, permitindo que os proprietários de perfis interajam com segurança com endereços externos. Os proprietários podem executar chamadas para endereços-alvo mantendo controle sobre a quantidade de tokens nativos enviados e os dados transmitidos. Este contrato utiliza o <code class="language-plaintext highlighter-rouge">Registry</code> para verificar a propriedade, garantindo que apenas usuários autorizados possam utilizar sua funcionalidade.</p>
+
+<h3 id="allo-contract-allosol">Allo Contract (<code class="language-plaintext highlighter-rouge">Allo.sol</code>)</h3>
+
+<p>No coração do Allo Protocol está o contrato <code class="language-plaintext highlighter-rouge">Allo</code>, um smart contract versátil e rico em recursos que permite a alocação e distribuição eficiente e descentralizada de fundos. O contrato abrange mecanismos para manipulação de taxas, gestão de tesouraria e definição de controles de acesso. Seu design abrangente é composto por funções, variáveis, modificadores e eventos distintos que colaboram para oferecer um framework robusto de gestão de fundos.</p>
+
+<p>Nesta versão refatorada, o <code class="language-plaintext highlighter-rouge">Allo</code> também integra:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">IFeeStrategy</code> para cálculo desacoplado de taxas.</li>
+  <li><code class="language-plaintext highlighter-rouge">IStrategyFactory</code> para criação desacoplada de estratégias.</li>
+  <li><code class="language-plaintext highlighter-rouge">initializeGoFPatterns()</code> para migração atômica segura em upgrades.</li>
+</ul>
+
+<h2 id="funcionalidades-e-interações-principais">Funcionalidades e interações principais</h2>
+
+<h3 id="criação-e-gestão-de-perfis">Criação e gestão de perfis</h3>
+
+<p>O protocolo Allo começa com a criação e gestão de perfis através do contrato <code class="language-plaintext highlighter-rouge">Registry</code>. Os usuários podem criar perfis, cada um identificado por um profile ID único. Metadados, endereços de atestação e membros podem ser personalizados durante a criação. O contrato <code class="language-plaintext highlighter-rouge">Registry</code> garante que apenas usuários autorizados possam manipular perfis verificando a propriedade.</p>
+
+<h3 id="interações-externas-seguras">Interações externas seguras</h3>
+
+<p>O contrato <code class="language-plaintext highlighter-rouge">Anchor</code> faz a ponte entre os proprietários de perfis e endereços externos. Ele fornece um gateway seguro para que os proprietários executem chamadas para contratos externos, especificando a quantidade de tokens nativos e os dados a serem enviados. O <code class="language-plaintext highlighter-rouge">Anchor</code> incorpora o <code class="language-plaintext highlighter-rouge">Registry</code> para validar a propriedade do perfil, garantindo que apenas proprietários legítimos possam acessar suas funcionalidades.</p>
+
+<h3 id="alocação-e-distribuição-avançada-de-fundos">Alocação e distribuição avançada de fundos</h3>
+
+<p>A essência da funcionalidade do protocolo reside no contrato <code class="language-plaintext highlighter-rouge">Allo</code>, que permite a gestão descentralizada e automatizada de fundos. As pools são criadas e gerenciadas neste contrato, cada uma com estratégias personalizáveis para alocação e distribuição. Os usuários podem criar pools, definir parâmetros e definir estratégias, enquanto administradores e gerentes controlam a alocação e distribuição efetiva dos fundos.</p>
+
+<h3 id="manipulação-de-taxas-e-gestão-da-tesouraria">Manipulação de taxas e gestão da tesouraria</h3>
+
+<p>O contrato <code class="language-plaintext highlighter-rouge">Allo</code> incorpora um sistema abrangente de gestão de taxas. O proprietário do contrato pode definir e atualizar parâmetros de taxas, controlar endereços de tesouraria e recuperar fundos. Esta estrutura de taxas garante a sustentabilidade e adaptabilidade do protocolo. O mecanismo de gestão da tesouraria aumenta a robustez do contrato ao permitir a recuperação controlada de fundos.</p>
+
+<h2 id="papéis-e-atores">Papéis e atores</h2>
+
+<p>O Allo Protocol delega papéis distintos aos participantes para fomentar uma governança eficiente:</p>
+
+<ul>
+  <li><strong>Profile Owners:</strong> Usuários que criam perfis usando o contrato <code class="language-plaintext highlighter-rouge">Registry</code>. Esses perfis são centrais para as interações do protocolo, oferecendo uma identidade única e permitindo chamadas externas seguras através do <code class="language-plaintext highlighter-rouge">Anchor</code>.</li>
+  <li><strong>Allo Owner:</strong> Indivíduos que controlam o contrato <code class="language-plaintext highlighter-rouge">Allo</code>, com autoridade para gerenciar recuperação de fundos, parâmetros de taxas e endereços de tesouraria. Seu papel é fundamental para a estabilidade financeira do protocolo.</li>
+  <li><strong>Profile Member:</strong> Membros de um perfil do Registry possuem direitos de acesso específicos conforme definido pelo proprietário do perfil.</li>
+  <li><strong>Pool Creator:</strong> Usuário que pode criar novas pools usando estratégias customizadas ou clonáveis, especificando metadados, endereços de estratégia, gerentes e outros parâmetros.</li>
+  <li><strong>Pool Administrator:</strong> Usuários com controle administrativo sobre pools específicas. Podem gerenciar os pool managers.</li>
+  <li><strong>Pool Manager:</strong> Usuários que gerenciam fundos dentro de pools específicas, alocando e distribuindo fundos de acordo com a estratégia da pool.</li>
+  <li><strong>Governance Signers:</strong> Signatários da <code class="language-plaintext highlighter-rouge">AlloMultisigWallet</code> que propõem, confirmam e executam ações administrativas através do timelock.</li>
+</ul>
+
+<h2 id="padrões-de-projeto-aplicados">Padrões de projeto aplicados</h2>
+
+<h3 id="facade--allostarterfacadesol">Facade — <code class="language-plaintext highlighter-rouge">AlloStarterFacade.sol</code></h3>
+
+<p>A fachada oferece um ponto de entrada simplificado para criar uma campanha. O fluxo corrigido preserva a identidade do usuário:</p>
+
+<ol>
+  <li>O usuário cria um perfil no <code class="language-plaintext highlighter-rouge">Registry</code> e adiciona a fachada como membro.</li>
+  <li>O usuário chama <code class="language-plaintext highlighter-rouge">initializeCampaign(...)</code> na fachada.</li>
+  <li>A fachada cria a pool no <code class="language-plaintext highlighter-rouge">Allo</code>, concede ao usuário a role de manager e retorna o <code class="language-plaintext highlighter-rouge">poolId</code>.</li>
+</ol>
+
+<blockquote>
+  <p><strong>Segurança:</strong> o usuário continua sendo o owner do perfil e pool manager. A fachada detém apenas a role de admin do pool e só pode exercê-la mediante verificação de ownership.</p>
+</blockquote>
+
+<h3 id="strategy--ifeestrategysol--flatfeestrategysol">Strategy — <code class="language-plaintext highlighter-rouge">IFeeStrategy.sol</code> / <code class="language-plaintext highlighter-rouge">FlatFeeStrategy.sol</code></h3>
+
+<p>O cálculo de taxas foi extraído do <code class="language-plaintext highlighter-rouge">Allo.sol</code> para uma família de estratégias:</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="k">interface</span> <span class="n">IFeeStrategy</span> <span class="p">{</span>
+    <span class="k">function</span> <span class="n">getFee</span><span class="p">(</span><span class="kt">uint256</span> <span class="n">_amount</span><span class="p">)</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">uint256</span><span class="p">);</span>
+    <span class="k">function</span> <span class="n">getBaseFee</span><span class="p">()</span> <span class="k">external</span> <span class="k">view</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">uint256</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>A implementação <code class="language-plaintext highlighter-rouge">FlatFeeStrategy</code> retorna percentuais e taxas base configuráveis. Isso permite substituir o algoritmo de fee sem recompilar o <code class="language-plaintext highlighter-rouge">Allo</code>.</p>
+
+<h3 id="factory-method--strategyfactorysol">Factory Method — <code class="language-plaintext highlighter-rouge">StrategyFactory.sol</code></h3>
+
+<p>A criação de novas instâncias de estratégias é delegada a uma fábrica:</p>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="k">interface</span> <span class="n">IStrategyFactory</span> <span class="p">{</span>
+    <span class="k">function</span> <span class="n">createStrategy</span><span class="p">(</span>
+        <span class="kt">address</span> <span class="n">_implementation</span><span class="p">,</span>
+        <span class="kt">bytes</span> <span class="k">memory</span> <span class="n">_initStrategyData</span>
+    <span class="p">)</span> <span class="k">external</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">address</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>A fábrica gerencia nonces e clonagem, isolando o <code class="language-plaintext highlighter-rouge">Allo</code> dessa complexidade.</p>
+
+<h3 id="state--basestrategysol--estratégias-derivadas">State — <code class="language-plaintext highlighter-rouge">BaseStrategy.sol</code> / estratégias derivadas</h3>
+
+<p>As estratégias modelam o ciclo de vida das pools através de estados explícitos:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Estado</th>
+      <th>Significado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">None</code></td>
+      <td>Estado inicial</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Active</code></td>
+      <td>Pool aceitando registros</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Rejected</code></td>
+      <td>Pool rejeitada</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Appeal</code></td>
+      <td>Período de recurso</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Paid</code></td>
+      <td>Distribuição concluída</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Cada transição de estado dispara ações específicas (registro, alocação, distribuição), tornando o comportamento previsível e auditável.</p>
+
+<h2 id="fluxos-de-usuário">Fluxos de usuário</h2>
+
+<h3 id="allo-contract">Allo Contract</h3>
+
+<ul>
+  <li><strong>Funcionalidade:</strong> gerencia a criação e operação de pools, estratégias e alocação de fundos no ecossistema Allo.</li>
+  <li><strong>Interações:</strong>
+    <ul>
+      <li>Interage com o <code class="language-plaintext highlighter-rouge">Registry</code> para gerenciar perfis de usuários e verificar autorização.</li>
+      <li>Interage com estratégias individuais (herdeiras de <code class="language-plaintext highlighter-rouge">BaseStrategy</code>) para alocação e distribuição.</li>
+      <li>Interage com o <code class="language-plaintext highlighter-rouge">Anchor</code> para executar chamadas arbitrárias a endereços-alvo.</li>
+    </ul>
+  </li>
+  <li><strong>Fluxos:</strong>
+    <ul>
+      <li>Usuários criam pools usando estratégias customizadas ou clonáveis.</li>
+      <li>As pools são financiadas e os fundos alocados são distribuídos entre recipients conforme a lógica da estratégia.</li>
+      <li>Operações em lote podem registrar e alocar fundos para múltiplos recipients simultaneamente.</li>
+      <li>O contrato gerencia ownership e papéis de managers e administradores.</li>
+      <li>O proprietário do contrato pode gerenciar parâmetros como percentuais de taxa, taxas base e estratégias aprovadas.</li>
+      <li>Usuários podem recuperar fundos do contrato.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="registry-contract">Registry Contract</h3>
+
+<ul>
+  <li><strong>Funcionalidade:</strong> gerencia perfis de usuários e suas permissões associadas.</li>
+  <li><strong>Interações:</strong> valida se um usuário ou endereço tem as permissões necessárias para criar ou gerenciar pools.</li>
+  <li><strong>Fluxos:</strong>
+    <ul>
+      <li>Usuários criam perfis e associam endereços para estabelecer papéis e permissões.</li>
+      <li>Perfis definem permissões para criação e gestão de pools.</li>
+      <li>Um perfil pode ter múltiplos endereços associados, permitindo colaboração.</li>
+      <li>O <code class="language-plaintext highlighter-rouge">Allo</code> consulta o <code class="language-plaintext highlighter-rouge">Registry</code> para verificar permissões antes de executar ações.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="anchor-contract">Anchor Contract</h3>
+
+<ul>
+  <li><strong>Funcionalidade:</strong> permite a execução de chamadas arbitrárias para endereços-alvo baseadas em condições específicas.</li>
+  <li><strong>Interações:</strong> interage com o <code class="language-plaintext highlighter-rouge">Allo</code>, permitindo que usuários autorizados (como pool managers) iniciem chamadas para endereços externos.</li>
+  <li><strong>Fluxos:</strong>
+    <ul>
+      <li>Usuários autorizados podem iniciar chamadas para endereços-alvo usando a função <code class="language-plaintext highlighter-rouge">execute</code>.</li>
+      <li>As chamadas podem incluir o envio de tokens nativos junto com os dados.</li>
+      <li>Facilita a integração com sistemas e contratos externos, permitindo ações dinâmicas baseadas em condições pré-definidas.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="interação-geral">Interação geral</h3>
+
+<ol>
+  <li>Usuários criam perfis no contrato <code class="language-plaintext highlighter-rouge">Registry</code> e associam seus endereços a papéis e permissões específicos.</li>
+  <li>Usuários, identificados por seus endereços e perfis associados, interagem com o contrato <code class="language-plaintext highlighter-rouge">Allo</code> para criar pools, alocar fundos e gerenciar pools.</li>
+  <li>O contrato <code class="language-plaintext highlighter-rouge">Allo</code> verifica os perfis dos usuários com o <code class="language-plaintext highlighter-rouge">Registry</code> para garantir que apenas usuários autorizados executem certas ações.</li>
+  <li>Estratégias (herdadas de <code class="language-plaintext highlighter-rouge">BaseStrategy</code>) dentro do <code class="language-plaintext highlighter-rouge">Allo</code> lidam com alocação, distribuição e gestão de fundos com base em lógica específica.</li>
+  <li>O contrato <code class="language-plaintext highlighter-rouge">Anchor</code> permite a execução dinâmica de chamadas arbitrárias com base em condições pré-definidas, frequentemente desencadeadas por eventos no ecossistema <code class="language-plaintext highlighter-rouge">Allo</code>.</li>
+  <li>Juntos, esses contratos criam um ecossistema onde os usuários podem gerenciar e alocar fundos de acordo com várias estratégias, respeitando permissões e condições pré-definidas.</li>
+</ol>
+
+<h2 id="camada-de-governança">Camada de governança</h2>
+
+<p>A governança é composta por:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">AlloTimelockController</code> — contrato de timelock com delay mínimo de 48 horas.</li>
+  <li><code class="language-plaintext highlighter-rouge">AlloMultisigWallet</code> — multisig M-of-N que propõe e executa operações no timelock.</li>
+  <li>Scripts em <code class="language-plaintext highlighter-rouge">scripts/governance/</code> para deploy, proposta, confirmação e execução.</li>
+</ul>
+
+<p>Operações administrativas (upgrades, mudança de parâmetros, recuperação de fundos) devem seguir o ciclo: <strong>propor → confirmar N vezes → aguardar timelock → executar</strong>.</p>
+
+<h2 id="conclusão">Conclusão</h2>
+
+<p>O Allo Protocol é um framework tecnologicamente avançado para alocação e distribuição descentralizada de fundos. Ao empregar os contratos <code class="language-plaintext highlighter-rouge">Registry</code>, <code class="language-plaintext highlighter-rouge">Anchor</code> e <code class="language-plaintext highlighter-rouge">Allo</code> em conjunto, o protocolo estabelece um ecossistema onde os usuários podem gerenciar fundos com segurança, definir estratégias e participar de um ecossistema DeFi que incorpora transparência e governança centrada no usuário.</p>
+
+    </article>
+  </div>
+</div>
+
+  </main>
+  <footer class="site-footer">
+  <div class="wrapper">
+    <div class="footer-grid">
+      <div>
+        <h3 class="footer-brand">ALLO Protocol</h3>
+        <p class="footer-tagline">Alocação e Distribuição Descentralizada de Fundos</p>
+      </div>
+      <div>
+        <h4>Links</h4>
+        <ul class="footer-links">
+          <li><a href="/allo/">Início</a></li>
+          <li><a href="/allo/historia/">História</a></li>
+          <li><a href="/allo/arquitetura/">Arquitetura</a></li>
+          <li><a href="/allo/dao/">Governança DAO</a></li>
+          <li><a href="/allo/uso/">Como Usar</a></li>
+          <li><a href="/allo/seguranca/">Segurança</a></li>
+          <li><a href="/allo/contribuir/">Contribuir</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Fontes</h4>
+        <ul class="footer-links">
+          <li><a href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">Fork Acadêmico ↗</a></li>
+          <li><a href="https://github.com/allo-protocol/allo-v2" target="_blank" rel="noopener">Allo Protocol V2 ↗</a></li>
+          <li><a href="https://docs.allo.gitcoin.co/" target="_blank" rel="noopener">Documentação Allo ↗</a></li>
+          <li><a href="https://rapport.tec.br" target="_blank" rel="noopener">Rapport Tecnologia ↗</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>
+        &copy; 2026 Rapport Tecnologia.
+        Conteúdo baseado no <a href="https://github.com/allo-protocol/allo-v2" target="_blank" rel="noopener">Allo Protocol V2</a> (Gitcoin, AGPL-3.0)
+        e no trabalho acadêmico de <strong>Francisco Josias da Silva Batista</strong>.
+      </p>
+    </div>
+  </div>
+</footer>
+
+  <script type="module">
+    const blocks = [...document.querySelectorAll('pre code.language-mermaid')];
+    if (blocks.length) {
+      try {
+        const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'strict',
+          theme: 'base',
+          fontFamily: 'Inter, Arial, sans-serif',
+          flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'linear' },
+          themeVariables: {
+            darkMode: false,
+            background: '#ffffff',
+            primaryColor: '#fff0e9',
+            primaryTextColor: '#222222',
+            primaryBorderColor: '#a63824',
+            secondaryColor: '#edf4ef',
+            secondaryTextColor: '#222222',
+            secondaryBorderColor: '#46634e',
+            tertiaryColor: '#f5f4f2',
+            tertiaryTextColor: '#222222',
+            tertiaryBorderColor: '#68605b',
+            lineColor: '#55515a',
+            textColor: '#222222',
+            mainBkg: '#fff0e9',
+            nodeBorder: '#a63824',
+            clusterBkg: '#f5f4f2',
+            clusterBorder: '#68605b',
+            titleColor: '#222222',
+            edgeLabelBackground: '#ffffff',
+            nodeTextColor: '#222222',
+            fontSize: '16px'
+          }
+        });
+        for (const [index, block] of blocks.entries()) {
+          try {
+            const { svg, bindFunctions } = await mermaid.render(`allo-diagram-${index}`, block.textContent);
+            const diagram = document.createElement('div');
+            diagram.className = 'mermaid';
+            diagram.tabIndex = 0;
+            diagram.setAttribute('role', 'region');
+            diagram.setAttribute('aria-label', 'Diagrama do protocolo. Use as setas para rolar horizontalmente.');
+            diagram.innerHTML = svg;
+            block.parentElement.replaceWith(diagram);
+            bindFunctions?.(diagram);
+            const hint = document.createElement('p');
+            hint.className = 'diagram-hint';
+            hint.textContent = 'Diagrama em tamanho legível. Se necessário, role na horizontal para explorar.';
+            diagram.after(hint);
+          } catch (error) {
+            console.error('Não foi possível renderizar o diagrama:', error);
+          }
+        }
+      } catch (error) {
+        console.error('Mermaid indisponível; a definição textual foi preservada.', error);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="language" content="pt-BR">
+<meta name="author" content="Rapport Tecnologia">
+
+<meta name="keywords" content="ALLO Protocol, Allo Protocol V2, Gitcoin, Ethereum, smart contracts, DeFi, alocação descentralizada, governança DAO, multisig, timelock, padrões de projeto GoF, Solidity, Rapport Tecnologia">
+
+
+<meta name="description" content="Multisig, timelock e o ciclo de vida de uma proposta administrativa">
+
+<link rel="canonical" href="https://rapport.tec.br/allo/dao/">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Governança DAO" />
+<meta name="author" content="Rapport Tecnologia" />
+<meta property="og:locale" content="pt_BR" />
+<meta name="description" content="Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores." />
+<meta property="og:description" content="Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores." />
+<link rel="canonical" href="https://rapport.tec.br/allo/dao/" />
+<meta property="og:url" content="https://rapport.tec.br/allo/dao/" />
+<meta property="og:site_name" content="ALLO Protocol" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Governança DAO" />
+<meta name="twitter:site" content="@rapport_tec" />
+<meta name="twitter:creator" content="@rapport_tec" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","author":{"@type":"Person","name":"Rapport Tecnologia"},"description":"Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores.","headline":"Governança DAO","url":"https://rapport.tec.br/allo/dao/"}</script>
+<!-- End Jekyll SEO tag -->
+
+<title>Governança DAO | ALLO Protocol</title>
+<link rel="stylesheet" href="/allo/assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/allo/assets/images/favicon.svg">
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/allo/sitemap.xml">
+
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <header class="site-header">
+  <div class="wrapper">
+    <a class="site-title" href="/allo/">
+      <span class="site-logo" aria-hidden="true">a.</span>
+      <span>ALLO Protocol<small>por Rapport Tecnologia</small></span>
+    </a>
+    <nav class="site-nav" aria-label="Navegação principal">
+      <button type="button" class="nav-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navigation">
+        <span class="menu-icon"></span>
+      </button>
+      <div class="nav-menu" id="navigation">
+        <a class="nav-link" href="/allo/">Início</a>
+        <a class="nav-link" href="/allo/historia/">História</a>
+        <a class="nav-link" href="/allo/arquitetura/">Arquitetura</a>
+        <a class="nav-link active" href="/allo/dao/">DAO</a>
+        <a class="nav-link" href="/allo/uso/">Como Usar</a>
+        <a class="nav-link" href="/allo/contribuir/">Contribuir</a>
+        <a class="nav-link" href="https://rapport.tec.br/allo-docs/" target="_blank" rel="noopener">Docs ↗</a>
+        <a class="nav-link nav-cta" href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const nav = document.querySelector('.nav-menu');
+  function closeMenu() {
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir menu');
+    nav.classList.remove('is-open');
+  }
+  toggle.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') !== 'true';
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    nav.classList.toggle('is-open', open);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      closeMenu(); toggle.focus();
+    }
+  });
+  nav.addEventListener('click', event => { if (event.target.closest('a')) closeMenu(); });
+</script>
+
+  <main id="conteudo" tabindex="-1" class="page-content" aria-label="Conteúdo">
+    <div class="page">
+  
+  <header class="page-header">
+    <div class="wrapper">
+      <h1>Governança DAO</h1>
+      
+        <p class="page-subtitle">Multisig, timelock e o ciclo de vida de uma proposta administrativa</p>
+      
+    </div>
+  </header>
+  
+
+  <div class="wrapper">
+    <article class="page-content-wrapper">
+      <h2 id="princípios-da-governança">Princípios da governança</h2>
+
+<p>A governança do ALLO-v2 segue o princípio de <strong>mínimo privilégio</strong> e <strong>decisão coletiva com execução retardada</strong>: nenhuma pessoa sozinha pode alterar o protocolo. Toda ação administrativa passa por uma <strong>multisig M-of-N</strong> e por um <strong>timelock on-chain de pelo menos 48 horas</strong>.</p>
+
+<p>Esse modelo não é uma DAO completa com token de governança, mas uma <strong>estrutura de governança administrativa</strong> que pode ser integrada a uma DAO tokenizada no futuro, conforme previsto nos requisitos do projeto.</p>
+
+<h2 id="componentes">Componentes</h2>
+
+<h3 id="allotimelockcontroller">AlloTimelockController</h3>
+
+<p>Contrato baseado no <code class="language-plaintext highlighter-rouge">TimelockController</code> da OpenZeppelin, com as seguintes características:</p>
+
+<ul>
+  <li><strong>Delay mínimo:</strong> 48 horas (<code class="language-plaintext highlighter-rouge">2 days</code>).</li>
+  <li><strong>Proposer único:</strong> a <code class="language-plaintext highlighter-rouge">AlloMultisigWallet</code>.</li>
+  <li><strong>Executor único:</strong> a <code class="language-plaintext highlighter-rouge">AlloMultisigWallet</code>.</li>
+  <li><strong>Canceller:</strong> a <code class="language-plaintext highlighter-rouge">AlloMultisigWallet</code>.</li>
+  <li>Após o deploy, o deployer renuncia ao papel de admin do timelock.</li>
+</ul>
+
+<div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="k">contract</span> <span class="n">AlloTimelockController</span> <span class="k">is</span> <span class="n">TimelockController</span> <span class="p">{</span>
+    <span class="kt">uint256</span> <span class="k">public</span> <span class="k">constant</span> <span class="n">MINIMUM_DELAY</span> <span class="o">=</span> <span class="mi">2</span> <span class="kc">days</span><span class="p">;</span>
+    <span class="c1">// ...
+</span><span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="allomultisigwallet">AlloMultisigWallet</h3>
+
+<p>Carteira multisig leve que gerencia propostas administrativas:</p>
+
+<ul>
+  <li>Transações representadas por <code class="language-plaintext highlighter-rouge">Transaction { target, value, data, executed, cancelled, confirmations }</code>.</li>
+  <li>Apenas signatários podem submeter, confirmar, revogar, cancelar e executar transações.</li>
+  <li>Alterações no conjunto de signatários ou no threshold só podem ser feitas pela própria multisig, via transação bem-sucedida.</li>
+</ul>
+
+<h2 id="ciclo-de-vida-de-uma-proposta">Ciclo de vida de uma proposta</h2>
+
+<pre><code class="language-mermaid">flowchart LR
+    A[Signatário submete&lt;br/&gt;transação na multisig] --&gt; B[Outros signatários&lt;br/&gt;confirmam]
+    B --&gt; C{Confirmações &gt;=&lt;br/&gt;threshold?}
+    C --&gt;|Não| B
+    C --&gt;|Sim| D[Executa transação&lt;br/&gt;da multisig]
+    D --&gt; E[Operação é&lt;br/&gt;agendada no timelock]
+    E --&gt; F[Aguarda delay&lt;br/&gt;mínimo de 48h]
+    F --&gt; G{Delay&lt;br/&gt;cumprido?}
+    G --&gt;|Não| F
+    G --&gt;|Sim| H[Executa operação&lt;br/&gt;on-chain]
+    H --&gt; I[Estado do protocolo&lt;br/&gt;é atualizado]
+</code></pre>
+
+<h3 id="1-submissão">1. Submissão</h3>
+
+<p>Um signatário cria uma transação na multisig. Por exemplo, para agendar um upgrade do <code class="language-plaintext highlighter-rouge">Allo</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="nv">GOV_SIGNER_PRIVATE_KEY</span><span class="o">=</span>0x... <span class="se">\</span>
+  npx hardhat run scripts/governance/upgradeAlloViaGovernance.ts <span class="nt">--network</span> sepolia
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>O script:</p>
+
+<ol>
+  <li>Valida o storage layout com <code class="language-plaintext highlighter-rouge">upgrades.validateUpgrade</code>.</li>
+  <li>Implanta a nova implementação com <code class="language-plaintext highlighter-rouge">prepareUpgrade</code>.</li>
+  <li>Codifica <code class="language-plaintext highlighter-rouge">ProxyAdmin.upgradeAndCall(proxy, newImpl, initializeGoFPatterns())</code>.</li>
+  <li>Agenda a operação no timelock via multisig.</li>
+  <li>Retorna o <code class="language-plaintext highlighter-rouge">transactionId</code> da multisig.</li>
+</ol>
+
+<h3 id="2-confirmação">2. Confirmação</h3>
+
+<p>Outros signatários confirmam a transação até atingir o threshold:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="nv">PROPOSAL_TX_ID</span><span class="o">=</span>0 <span class="nv">GOV_SIGNER_PRIVATE_KEY</span><span class="o">=</span>0x... <span class="se">\</span>
+  npx hardhat run scripts/governance/confirmProposal.ts <span class="nt">--network</span> sepolia
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Cada confirmação é uma transação separada na multisig. O script verifica o número atual de confirmações e o threshold configurado.</p>
+
+<h3 id="3-execução-da-multisig">3. Execução da multisig</h3>
+
+<p>Após atingir o threshold, qualquer signatário pode executar a transação da multisig, que chama o timelock para agendar a operação:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="nv">PROPOSAL_TX_ID</span><span class="o">=</span>0 <span class="nv">GOV_SIGNER_PRIVATE_KEY</span><span class="o">=</span>0x... <span class="se">\</span>
+  npx hardhat run scripts/governance/executeProposal.ts <span class="nt">--network</span> sepolia
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="4-timelock">4. Timelock</h3>
+
+<p>A operação fica bloqueada no timelock pelo período mínimo de 48 horas. Durante esse período, a comunidade pode inspecionar:</p>
+
+<ul>
+  <li>O <code class="language-plaintext highlighter-rouge">operationId</code> da operação.</li>
+  <li>O alvo (<code class="language-plaintext highlighter-rouge">target</code>).</li>
+  <li>O calldata (<code class="language-plaintext highlighter-rouge">data</code>).</li>
+  <li>O delay e o timestamp de liberação.</li>
+</ul>
+
+<h3 id="5-execução-on-chain">5. Execução on-chain</h3>
+
+<p>Após o delay, a mesma transação da multisig (ou outra equivalente) pode executar a operação do timelock. O script <code class="language-plaintext highlighter-rouge">executeProposal.ts</code> verifica se a operação subjacente está pronta (<code class="language-plaintext highlighter-rouge">isOperationReady</code>) antes de prosseguir.</p>
+
+<h2 id="propostas-administrativas-genéricas">Propostas administrativas genéricas</h2>
+
+<p>Para operações que não sejam upgrades (ex.: alterar parâmetro de taxa, transferir ownership), use <code class="language-plaintext highlighter-rouge">proposeAdminCall.ts</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="nv">PROPOSAL_TARGET</span><span class="o">=</span>0x... <span class="se">\</span>
+<span class="nv">PROPOSAL_DATA</span><span class="o">=</span>0x... <span class="se">\</span>
+<span class="nv">PROPOSAL_DELAY</span><span class="o">=</span>172800 <span class="se">\</span>
+<span class="nv">GOV_SIGNER_PRIVATE_KEY</span><span class="o">=</span>0x... <span class="se">\</span>
+  npx hardhat run scripts/governance/proposeAdminCall.ts <span class="nt">--network</span> sepolia
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="papéis-e-separação-de-responsabilidades">Papéis e separação de responsabilidades</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Papel</th>
+      <th>Responsabilidade</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Deployer</strong></td>
+      <td>Publicar implementação/proxy; remover privilégios após o deploy.</td>
+    </tr>
+    <tr>
+      <td><strong>Proxy Admin</strong></td>
+      <td>Executar upgrades; controlado pelo timelock.</td>
+    </tr>
+    <tr>
+      <td><strong>Allo Owner</strong></td>
+      <td>Parâmetros, plugins e recuperação de fundos; controlado pelo timelock.</td>
+    </tr>
+    <tr>
+      <td><strong>Registry Owner</strong></td>
+      <td>Recuperação autorizada do Registry.</td>
+    </tr>
+    <tr>
+      <td><strong>Relayer</strong></td>
+      <td>Operações rotineiras; sem privilégios administrativos.</td>
+    </tr>
+    <tr>
+      <td><strong>Treasury</strong></td>
+      <td>Receber taxas; multisig ou tesouraria auditada.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="segurança">Segurança</h2>
+
+<ul>
+  <li>Chaves administrativas devem estar em hardware wallet, HSM ou cofre.</li>
+  <li>Nunca passe chaves privadas como argumentos de linha de comando (use variáveis de ambiente).</li>
+  <li>Sempre simule a operação em fork antes de executar em testnet/mainnet.</li>
+  <li>Verifique o storage layout antes de qualquer upgrade.</li>
+  <li>Após o deploy, o deployer deve renunciar a todos os papéis temporários.</li>
+</ul>
+
+<h2 id="futuro-dao-tokenizada">Futuro: DAO tokenizada</h2>
+
+<p>Os requisitos do projeto preveem que uma DAO completa, se adicionada, deve implementar:</p>
+
+<ul>
+  <li>Estados de proposta (<code class="language-plaintext highlighter-rouge">Pending</code>, <code class="language-plaintext highlighter-rouge">Active</code>, <code class="language-plaintext highlighter-rouge">Canceled</code>, <code class="language-plaintext highlighter-rouge">Defeated</code>, <code class="language-plaintext highlighter-rouge">Succeeded</code>, <code class="language-plaintext highlighter-rouge">Queued</code>, <code class="language-plaintext highlighter-rouge">Executed</code>, <code class="language-plaintext highlighter-rouge">Expired</code>).</li>
+  <li>Quorum configurável.</li>
+  <li>Duração de votação e cooldown entre propostas.</li>
+  <li>Delegação de votos.</li>
+  <li>Lista de permissão de executores.</li>
+  <li>Pausabilidade de emergência.</li>
+  <li>Timelock.</li>
+</ul>
+
+    </article>
+  </div>
+</div>
+
+  </main>
+  <footer class="site-footer">
+  <div class="wrapper">
+    <div class="footer-grid">
+      <div>
+        <h3 class="footer-brand">ALLO Protocol</h3>
+        <p class="footer-tagline">Alocação e Distribuição Descentralizada de Fundos</p>
+      </div>
+      <div>
+        <h4>Links</h4>
+        <ul class="footer-links">
+          <li><a href="/allo/">Início</a></li>
+          <li><a href="/allo/historia/">História</a></li>
+          <li><a href="/allo/arquitetura/">Arquitetura</a></li>
+          <li><a href="/allo/dao/">Governança DAO</a></li>
+          <li><a href="/allo/uso/">Como Usar</a></li>
+          <li><a href="/allo/seguranca/">Segurança</a></li>
+          <li><a href="/allo/contribuir/">Contribuir</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Fontes</h4>
+        <ul class="footer-links">
+          <li><a href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">Fork Acadêmico ↗</a></li>
+          <li><a href="https://github.com/allo-protocol/allo-v2" target="_blank" rel="noopener">Allo Protocol V2 ↗</a></li>
+          <li><a href="https://docs.allo.gitcoin.co/" target="_blank" rel="noopener">Documentação Allo ↗</a></li>
+          <li><a href="https://rapport.tec.br" target="_blank" rel="noopener">Rapport Tecnologia ↗</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>
+        &copy; 2026 Rapport Tecnologia.
+        Conteúdo baseado no <a href="https://github.com/allo-protocol/allo-v2" target="_blank" rel="noopener">Allo Protocol V2</a> (Gitcoin, AGPL-3.0)
+        e no trabalho acadêmico de <strong>Francisco Josias da Silva Batista</strong>.
+      </p>
+    </div>
+  </div>
+</footer>
+
+  <script type="module">
+    const blocks = [...document.querySelectorAll('pre code.language-mermaid')];
+    if (blocks.length) {
+      try {
+        const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'strict',
+          theme: 'base',
+          fontFamily: 'Inter, Arial, sans-serif',
+          flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'linear' },
+          themeVariables: {
+            darkMode: false,
+            background: '#ffffff',
+            primaryColor: '#fff0e9',
+            primaryTextColor: '#222222',
+            primaryBorderColor: '#a63824',
+            secondaryColor: '#edf4ef',
+            secondaryTextColor: '#222222',
+            secondaryBorderColor: '#46634e',
+            tertiaryColor: '#f5f4f2',
+            tertiaryTextColor: '#222222',
+            tertiaryBorderColor: '#68605b',
+            lineColor: '#55515a',
+            textColor: '#222222',
+            mainBkg: '#fff0e9',
+            nodeBorder: '#a63824',
+            clusterBkg: '#f5f4f2',
+            clusterBorder: '#68605b',
+            titleColor: '#222222',
+            edgeLabelBackground: '#ffffff',
+            nodeTextColor: '#222222',
+            fontSize: '16px'
+          }
+        });
+        for (const [index, block] of blocks.entries()) {
+          try {
+            const { svg, bindFunctions } = await mermaid.render(`allo-diagram-${index}`, block.textContent);
+            const diagram = document.createElement('div');
+            diagram.className = 'mermaid';
+            diagram.tabIndex = 0;
+            diagram.setAttribute('role', 'region');
+            diagram.setAttribute('aria-label', 'Diagrama do protocolo. Use as setas para rolar horizontalmente.');
+            diagram.innerHTML = svg;
+            block.parentElement.replaceWith(diagram);
+            bindFunctions?.(diagram);
+            const hint = document.createElement('p');
+            hint.className = 'diagram-hint';
+            hint.textContent = 'Diagrama em tamanho legível. Se necessário, role na horizontal para explorar.';
+            diagram.after(hint);
+          } catch (error) {
+            console.error('Não foi possível renderizar o diagrama:', error);
+          }
+        }
+      } catch (error) {
+        console.error('Mermaid indisponível; a definição textual foi preservada.', error);
+      }
+    }
+  </script>
+</body>
+</html>

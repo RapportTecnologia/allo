@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rapport.tec.br/allo/sitemap.xml
+Sitemap: https://rapport.tec.br/allo-docs/sitemap.xml
+Sitemap: https://rapport.tec.br/allo-docs/sitemap-0.xml

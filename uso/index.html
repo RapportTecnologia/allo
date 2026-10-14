@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="language" content="pt-BR">
+<meta name="author" content="Rapport Tecnologia">
+
+<meta name="keywords" content="ALLO Protocol, Allo Protocol V2, Gitcoin, Ethereum, smart contracts, DeFi, alocação descentralizada, governança DAO, multisig, timelock, padrões de projeto GoF, Solidity, Rapport Tecnologia">
+
+
+<meta name="description" content="Instale, compile, teste e execute os contratos do ALLO-v2">
+
+<link rel="canonical" href="https://rapport.tec.br/allo/uso/">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Como Usar" />
+<meta name="author" content="Rapport Tecnologia" />
+<meta property="og:locale" content="pt_BR" />
+<meta name="description" content="Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores." />
+<meta property="og:description" content="Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores." />
+<link rel="canonical" href="https://rapport.tec.br/allo/uso/" />
+<meta property="og:url" content="https://rapport.tec.br/allo/uso/" />
+<meta property="og:site_name" content="ALLO Protocol" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Como Usar" />
+<meta name="twitter:site" content="@rapport_tec" />
+<meta name="twitter:creator" content="@rapport_tec" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","author":{"@type":"Person","name":"Rapport Tecnologia"},"description":"Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores.","headline":"Como Usar","url":"https://rapport.tec.br/allo/uso/"}</script>
+<!-- End Jekyll SEO tag -->
+
+<title>Como Usar | ALLO Protocol</title>
+<link rel="stylesheet" href="/allo/assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/allo/assets/images/favicon.svg">
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/allo/sitemap.xml">
+
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <header class="site-header">
+  <div class="wrapper">
+    <a class="site-title" href="/allo/">
+      <span class="site-logo" aria-hidden="true">a.</span>
+      <span>ALLO Protocol<small>por Rapport Tecnologia</small></span>
+    </a>
+    <nav class="site-nav" aria-label="Navegação principal">
+      <button type="button" class="nav-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navigation">
+        <span class="menu-icon"></span>
+      </button>
+      <div class="nav-menu" id="navigation">
+        <a class="nav-link" href="/allo/">Início</a>
+        <a class="nav-link" href="/allo/historia/">História</a>
+        <a class="nav-link" href="/allo/arquitetura/">Arquitetura</a>
+        <a class="nav-link" href="/allo/dao/">DAO</a>
+        <a class="nav-link active" href="/allo/uso/">Como Usar</a>
+        <a class="nav-link" href="/allo/contribuir/">Contribuir</a>
+        <a class="nav-link" href="https://rapport.tec.br/allo-docs/" target="_blank" rel="noopener">Docs ↗</a>
+        <a class="nav-link nav-cta" href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const nav = document.querySelector('.nav-menu');
+  function closeMenu() {
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir menu');
+    nav.classList.remove('is-open');
+  }
+  toggle.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') !== 'true';
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    nav.classList.toggle('is-open', open);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      closeMenu(); toggle.focus();
+    }
+  });
+  nav.addEventListener('click', event => { if (event.target.closest('a')) closeMenu(); });
+</script>
+
+  <main id="conteudo" tabindex="-1" class="page-content" aria-label="Conteúdo">
+    <div class="page">
+  
+  <header class="page-header">
+    <div class="wrapper">
+      <h1>Como Usar</h1>
+      
+        <p class="page-subtitle">Instale, compile, teste e execute os contratos do ALLO-v2</p>
+      
+    </div>
+  </header>
+  
+
+  <div class="wrapper">
+    <article class="page-content-wrapper">
+      <h2 id="pré-requisitos">Pré-requisitos</h2>
+
+<p>Antes de começar, certifique-se de ter instalado:</p>
+
+<ul>
+  <li><a href="https://nodejs.org/">Node.js</a> 22.13.0 ou superior (recomendado para o Hardhat disponível no projeto).</li>
+  <li><a href="https://book.getfoundry.sh/getting-started/installation">Foundry</a> para compilação e testes.</li>
+  <li><a href="https://bun.sh/">Bun</a> (usado nos scripts do projeto) ou npm para instalar dependências.</li>
+</ul>
+
+<h2 id="1-clone-o-repositório">1. Clone o repositório</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>git clone https://github.com/RapportTecnologia/allo.git
+<span class="nb">cd </span>allo
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<blockquote>
+  <p>Se estiver trabalhando no fork acadêmico, use o repositório correspondente.</p>
+</blockquote>
+
+<h2 id="2-instale-as-dependências">2. Instale as dependências</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="c"># Dependências Foundry</span>
+forge <span class="nb">install</span>
+
+<span class="c"># Dependências JavaScript</span>
+bun <span class="nb">install</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Ou, se preferir npm:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>npm <span class="nb">install</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="3-configure-as-variáveis-de-ambiente">3. Configure as variáveis de ambiente</h2>
+
+<p>Copie o arquivo de exemplo e preencha com suas chaves e URLs de RPC:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="nb">cp</span> .env.sample .env
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>O arquivo <code class="language-plaintext highlighter-rouge">.env</code> deve conter, no mínimo:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre>ALCHEMY_API_KEY=...
+INFURA_API_KEY=...
+ETHERSCAN_API_KEY=...
+DEPLOYER_PRIVATE_KEY=...
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<blockquote>
+  <p><strong>Atenção:</strong> nunca commit o arquivo <code class="language-plaintext highlighter-rouge">.env</code>. Ele já está listado no <code class="language-plaintext highlighter-rouge">.gitignore</code>.</p>
+</blockquote>
+
+<h2 id="4-compile-os-contratos">4. Compile os contratos</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>bun run build
+<span class="c"># ou</span>
+forge build
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="5-execute-os-testes">5. Execute os testes</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>bun run <span class="nb">test</span>
+<span class="c"># ou</span>
+forge <span class="nb">test</span> <span class="nt">--no-match-contract</span> <span class="s1">'(Lockup|SQF)'</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>A exclusão de <code class="language-plaintext highlighter-rouge">Lockup</code> e <code class="language-plaintext highlighter-rouge">SQF</code> evita testes que dependem de contratos experimentais ou de fork de mainnet.</p>
+
+<h2 id="6-deploy-dos-contratos-core">6. Deploy dos contratos core</h2>
+
+<pre><code class="language-mermaid">flowchart TB
+    A[Clone &amp; instale&lt;br/&gt;dependências] --&gt; B[Configure .env]
+    B --&gt; C[Compile com&lt;br/&gt;forge build]
+    C --&gt; D[Execute testes&lt;br/&gt;forge test]
+    D --&gt; E{Rede alvo?}
+    E --&gt;|Local| F[Inicie Anvil]
+    E --&gt;|Testnet| G[Configure RPC&lt;br/&gt;e chave]
+    F --&gt; H[Deploy core:&lt;br/&gt;Factory → Registry → Allo]
+    G --&gt; H
+    H --&gt; I[Transfera ownership&lt;br/&gt;para timelock/multisig]
+    I --&gt; J[Crie perfil&lt;br/&gt;no Registry]
+    J --&gt; K[Crie pool&lt;br/&gt;com estratégia]
+    K --&gt; L[Fund pool]
+    L --&gt; M[Alocar &amp;&lt;br/&gt;distribuir]
+</code></pre>
+
+<h3 id="deploy-local-com-anvil">Deploy local com Anvil</h3>
+
+<p>Inicie uma rede local:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>anvil <span class="nt">--block-time</span> 10
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Em outro terminal, execute os scripts de deploy:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>npx hardhat run scripts/core/deployContractFactory.ts <span class="nt">--network</span> localhost
+npx hardhat run scripts/core/deployRegistry.ts <span class="nt">--network</span> localhost
+npx hardhat run scripts/core/deployAllo.ts <span class="nt">--network</span> localhost
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="deploy-em-testnet">Deploy em testnet</h3>
+
+<p>Configure <code class="language-plaintext highlighter-rouge">hardhat.config.ts</code> com a URL da RPC e a chave privada do deployer. Em seguida:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>npx hardhat run scripts/core/deployAllo.ts <span class="nt">--network</span> sepolia
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Após o deploy, atualize o <code class="language-plaintext highlighter-rouge">ProxyAdmin</code> owner para o timelock/multisig usando <code class="language-plaintext highlighter-rouge">transferOwnershipToGovernance.ts</code>.</p>
+
+<h2 id="7-criar-um-perfil">7. Criar um perfil</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>npx hardhat run scripts/test/createProfile.ts <span class="nt">--network</span> sepolia
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>O script criará um perfil no <code class="language-plaintext highlighter-rouge">Registry</code> e um <code class="language-plaintext highlighter-rouge">Anchor</code> associado.</p>
+
+<h2 id="8-criar-uma-pool">8. Criar uma pool</h2>
+
+<p>Com o perfil criado e o endereço anotado:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>npx hardhat run scripts/test/createPool.ts <span class="nt">--network</span> sepolia
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Ou, para uma pool de alocação direta:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>npx hardhat run scripts/test/createDirectAllocationPool.ts <span class="nt">--network</span> sepolia
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="9-usar-a-allostarterfacade">9. Usar a AlloStarterFacade</h2>
+
+<p>A fachada reduz a complexidade para criar uma campanha. O fluxo correto é:</p>
+
+<ol>
+  <li>
+    <p>Crie um perfil no Registry com a fachada como membro:</p>
+
+    <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="n">registry</span><span class="p">.</span><span class="n">createProfile</span><span class="p">(</span>
+    <span class="n">_nonce</span><span class="p">,</span>
+    <span class="n">_name</span><span class="p">,</span>
+    <span class="n">_metadata</span><span class="p">,</span>
+    <span class="n">msg</span><span class="p">.</span><span class="n">sender</span><span class="p">,</span>        <span class="c1">// owner = você
+</span>    <span class="p">[</span><span class="n">facadeAddress</span><span class="p">]</span>    <span class="c1">// membros incluem a fachada
+</span><span class="p">);</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Aprove o token ERC-20 na fachada (se for financiar com ERC-20).</p>
+  </li>
+  <li>
+    <p>Chame <code class="language-plaintext highlighter-rouge">initializeCampaign</code>:</p>
+
+    <div class="language-solidity highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="n">facade</span><span class="p">.</span><span class="n">initializeCampaign</span><span class="p">(</span>
+    <span class="n">_profileId</span><span class="p">,</span>
+    <span class="n">_strategy</span><span class="p">,</span>
+    <span class="n">_initStrategyData</span><span class="p">,</span>
+    <span class="n">_token</span><span class="p">,</span>
+    <span class="n">_amount</span><span class="p">,</span>
+    <span class="n">_metadata</span><span class="p">,</span>
+    <span class="n">_managers</span>
+<span class="p">);</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>Você continua sendo o owner do perfil e recebe a role de <code class="language-plaintext highlighter-rouge">POOL_MANAGER_ROLE</code>. A fachada fica com a role de admin do pool, mas só pode adicionar/remover managers quando você, como owner do perfil, autoriza.</p>
+
+<h2 id="10-financiar-uma-pool">10. Financiar uma pool</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>npx hardhat run scripts/test/fundPool.ts <span class="nt">--network</span> sepolia
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Ou diretamente via <code class="language-plaintext highlighter-rouge">Allo.fundPool(poolId, amount)</code> com o token correto aprovado.</p>
+
+<h2 id="finalidades-do-projeto">Finalidades do projeto</h2>
+
+<p>O ALLO-v2 pode ser usado para:</p>
+
+<ul>
+  <li><strong>Financiamento coletivo</strong> com alocação baseada em estratégias customizadas.</li>
+  <li><strong>Quadratic funding</strong> e outras formas de matching de doações.</li>
+  <li><strong>Direct grants</strong> com ciclos de aprovação e pagamento.</li>
+  <li><strong>Gestão de tesourarias</strong> descentralizadas com controle por multisig/timelock.</li>
+  <li><strong>Experimentação acadêmica</strong> sobre padrões de projeto em Solidity.</li>
+</ul>
+
+    </article>
+  </div>
+</div>
+
+  </main>
+  <footer class="site-footer">
+  <div class="wrapper">
+    <div class="footer-grid">
+      <div>
+        <h3 class="footer-brand">ALLO Protocol</h3>
+        <p class="footer-tagline">Alocação e Distribuição Descentralizada de Fundos</p>
+      </div>
+      <div>
+        <h4>Links</h4>
+        <ul class="footer-links">
+          <li><a href="/allo/">Início</a></li>
+          <li><a href="/allo/historia/">História</a></li>
+          <li><a href="/allo/arquitetura/">Arquitetura</a></li>
+          <li><a href="/allo/dao/">Governança DAO</a></li>
+          <li><a href="/allo/uso/">Como Usar</a></li>
+          <li><a href="/allo/seguranca/">Segurança</a></li>
+          <li><a href="/allo/contribuir/">Contribuir</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Fontes</h4>
+        <ul class="footer-links">
+          <li><a href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">Fork Acadêmico ↗</a></li>
+          <li><a href="https://github.com/allo-protocol/allo-v2" target="_blank" rel="noopener">Allo Protocol V2 ↗</a></li>
+          <li><a href="https://docs.allo.gitcoin.co/" target="_blank" rel="noopener">Documentação Allo ↗</a></li>
+          <li><a href="https://rapport.tec.br" target="_blank" rel="noopener">Rapport Tecnologia ↗</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>
+        &copy; 2026 Rapport Tecnologia.
+        Conteúdo baseado no <a href="https://github.com/allo-protocol/allo-v2" target="_blank" rel="noopener">Allo Protocol V2</a> (Gitcoin, AGPL-3.0)
+        e no trabalho acadêmico de <strong>Francisco Josias da Silva Batista</strong>.
+      </p>
+    </div>
+  </div>
+</footer>
+
+  <script type="module">
+    const blocks = [...document.querySelectorAll('pre code.language-mermaid')];
+    if (blocks.length) {
+      try {
+        const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'strict',
+          theme: 'base',
+          fontFamily: 'Inter, Arial, sans-serif',
+          flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'linear' },
+          themeVariables: {
+            darkMode: false,
+            background: '#ffffff',
+            primaryColor: '#fff0e9',
+            primaryTextColor: '#222222',
+            primaryBorderColor: '#a63824',
+            secondaryColor: '#edf4ef',
+            secondaryTextColor: '#222222',
+            secondaryBorderColor: '#46634e',
+            tertiaryColor: '#f5f4f2',
+            tertiaryTextColor: '#222222',
+            tertiaryBorderColor: '#68605b',
+            lineColor: '#55515a',
+            textColor: '#222222',
+            mainBkg: '#fff0e9',
+            nodeBorder: '#a63824',
+            clusterBkg: '#f5f4f2',
+            clusterBorder: '#68605b',
+            titleColor: '#222222',
+            edgeLabelBackground: '#ffffff',
+            nodeTextColor: '#222222',
+            fontSize: '16px'
+          }
+        });
+        for (const [index, block] of blocks.entries()) {
+          try {
+            const { svg, bindFunctions } = await mermaid.render(`allo-diagram-${index}`, block.textContent);
+            const diagram = document.createElement('div');
+            diagram.className = 'mermaid';
+            diagram.tabIndex = 0;
+            diagram.setAttribute('role', 'region');
+            diagram.setAttribute('aria-label', 'Diagrama do protocolo. Use as setas para rolar horizontalmente.');
+            diagram.innerHTML = svg;
+            block.parentElement.replaceWith(diagram);
+            bindFunctions?.(diagram);
+            const hint = document.createElement('p');
+            hint.className = 'diagram-hint';
+            hint.textContent = 'Diagrama em tamanho legível. Se necessário, role na horizontal para explorar.';
+            diagram.after(hint);
+          } catch (error) {
+            console.error('Não foi possível renderizar o diagrama:', error);
+          }
+        }
+      } catch (error) {
+        console.error('Mermaid indisponível; a definição textual foi preservada.', error);
+      }
+    }
+  </script>
+</body>
+</html>

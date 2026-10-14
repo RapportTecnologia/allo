@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="language" content="pt-BR">
+<meta name="author" content="Rapport Tecnologia">
+
+<meta name="keywords" content="ALLO Protocol, Allo Protocol V2, Gitcoin, Ethereum, smart contracts, DeFi, alocação descentralizada, governança DAO, multisig, timelock, padrões de projeto GoF, Solidity, Rapport Tecnologia">
+
+
+<meta name="description" content="Fork, melhorias e integração de código no ALLO-v2">
+
+<link rel="canonical" href="https://rapport.tec.br/allo/contribuir/">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Contribuir" />
+<meta name="author" content="Rapport Tecnologia" />
+<meta property="og:locale" content="pt_BR" />
+<meta name="description" content="Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores." />
+<meta property="og:description" content="Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores." />
+<link rel="canonical" href="https://rapport.tec.br/allo/contribuir/" />
+<meta property="og:url" content="https://rapport.tec.br/allo/contribuir/" />
+<meta property="og:site_name" content="ALLO Protocol" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Contribuir" />
+<meta name="twitter:site" content="@rapport_tec" />
+<meta name="twitter:creator" content="@rapport_tec" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","author":{"@type":"Person","name":"Rapport Tecnologia"},"description":"Documentação do ALLO Protocol V2: história, arquitetura, padrões de projeto GoF, governança DAO, instruções de uso e guia de contribuição para desenvolvedores.","headline":"Contribuir","url":"https://rapport.tec.br/allo/contribuir/"}</script>
+<!-- End Jekyll SEO tag -->
+
+<title>Contribuir | ALLO Protocol</title>
+<link rel="stylesheet" href="/allo/assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/allo/assets/images/favicon.svg">
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/allo/sitemap.xml">
+
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <header class="site-header">
+  <div class="wrapper">
+    <a class="site-title" href="/allo/">
+      <span class="site-logo" aria-hidden="true">a.</span>
+      <span>ALLO Protocol<small>por Rapport Tecnologia</small></span>
+    </a>
+    <nav class="site-nav" aria-label="Navegação principal">
+      <button type="button" class="nav-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navigation">
+        <span class="menu-icon"></span>
+      </button>
+      <div class="nav-menu" id="navigation">
+        <a class="nav-link" href="/allo/">Início</a>
+        <a class="nav-link" href="/allo/historia/">História</a>
+        <a class="nav-link" href="/allo/arquitetura/">Arquitetura</a>
+        <a class="nav-link" href="/allo/dao/">DAO</a>
+        <a class="nav-link" href="/allo/uso/">Como Usar</a>
+        <a class="nav-link active" href="/allo/contribuir/">Contribuir</a>
+        <a class="nav-link" href="https://rapport.tec.br/allo-docs/" target="_blank" rel="noopener">Docs ↗</a>
+        <a class="nav-link nav-cta" href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const nav = document.querySelector('.nav-menu');
+  function closeMenu() {
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir menu');
+    nav.classList.remove('is-open');
+  }
+  toggle.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') !== 'true';
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    nav.classList.toggle('is-open', open);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      closeMenu(); toggle.focus();
+    }
+  });
+  nav.addEventListener('click', event => { if (event.target.closest('a')) closeMenu(); });
+</script>
+
+  <main id="conteudo" tabindex="-1" class="page-content" aria-label="Conteúdo">
+    <div class="page">
+  
+  <header class="page-header">
+    <div class="wrapper">
+      <h1>Contribuir</h1>
+      
+        <p class="page-subtitle">Fork, melhorias e integração de código no ALLO-v2</p>
+      
+    </div>
+  </header>
+  
+
+  <div class="wrapper">
+    <article class="page-content-wrapper">
+      <h2 id="por-que-fazer-um-fork">Por que fazer um fork?</h2>
+
+<p>O Allo Protocol V2 é open-source e licenciado sob AGPL-3.0-only. Fazer um fork permite:</p>
+
+<ul>
+  <li>Testar novas estratégias de alocação.</li>
+  <li>Adicionar padrões de projeto ou refatorar módulos específicos.</li>
+  <li>Integrar uma camada de governança DAO customizada.</li>
+  <li>Adaptar o protocolo para outras redes EVM.</li>
+  <li>Contribuir com correções de segurança ou melhorias de documentação.</li>
+</ul>
+
+<h2 id="como-fazer-o-fork">Como fazer o fork</h2>
+
+<h3 id="1-fork-no-github">1. Fork no GitHub</h3>
+
+<p>Acesse o repositório do fork acadêmico:</p>
+
+<p>👉 <a href="https://github.com/RapportTecnologia/allo">github.com/RapportTecnologia/allo</a></p>
+
+<p>Clique em <strong>Fork</strong> e escolha sua conta ou organização.</p>
+
+<h3 id="2-clone-o-seu-fork">2. Clone o seu fork</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>git clone https://github.com/&lt;seu-usuario&gt;/allo.git
+<span class="nb">cd </span>allo
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="3-adicione-o-upstream">3. Adicione o upstream</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>git remote add upstream https://github.com/allo-protocol/allo-v2.git
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Isso permite sincronizar atualizações do repositório original.</p>
+
+<h3 id="4-crie-uma-branch-para-sua-contribuição">4. Crie uma branch para sua contribuição</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>git checkout <span class="nt">-b</span> feat/minha-melhoria
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Use prefixos claros:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">feat/</code> — nova funcionalidade.</li>
+  <li><code class="language-plaintext highlighter-rouge">fix/</code> — correção de bug.</li>
+  <li><code class="language-plaintext highlighter-rouge">refactor/</code> — refatoração sem mudança de comportamento.</li>
+  <li><code class="language-plaintext highlighter-rouge">docs/</code> — documentação.</li>
+  <li><code class="language-plaintext highlighter-rouge">security/</code> — ajuste de segurança.</li>
+</ul>
+
+<h2 id="padrões-de-código">Padrões de código</h2>
+
+<ul>
+  <li>Siga o estilo do projeto: <code class="language-plaintext highlighter-rouge">forge fmt</code> para Solidity e ESLint/Prettier para TypeScript.</li>
+  <li>Mantenha contratos abaixo do limite EIP-170 (~24 KB).</li>
+  <li>Prefira composição e interfaces a herança profunda.</li>
+  <li>Documente funções públicas com NatSpec.</li>
+  <li>Adicione testes para funções novas ou modificadas.</li>
+</ul>
+
+<h2 id="testes-obrigatórios">Testes obrigatórios</h2>
+
+<p>Antes de abrir um pull request, execute:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>forge build <span class="nt">--sizes</span>
+forge <span class="nb">test</span> <span class="nt">--no-match-contract</span> <span class="s1">'(Lockup|SQF)'</span>
+bun run typecheck
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Para mudanças em contratos upgradeáveis, execute também:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>npx @openzeppelin/upgrades-core validate
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="checklist-de-segurança">Checklist de segurança</h2>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Nenhuma chave privada, senha ou API key foi commitada.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" /><code class="language-plaintext highlighter-rouge">.env</code> e arquivos <code class="language-plaintext highlighter-rouge">*.key</code> estão no <code class="language-plaintext highlighter-rouge">.gitignore</code>.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Novas funções possuem validação de acesso.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Entradas externas são validadas antes de uso.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Operações de transferência de tokens usam reentrancy guard quando necessário.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Mudanças em storage layout de contratos upgradeáveis foram validadas.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Scripts não imprimem segredos em logs.</li>
+</ul>
+
+<h2 id="como-abrir-um-pull-request">Como abrir um Pull Request</h2>
+
+<ol>
+  <li>
+    <p>Sincronize com o upstream:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>git fetch upstream
+git rebase upstream/main
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Faça push da sua branch:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>git push origin feat/minha-melhoria
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Abra o PR no GitHub descrevendo:</p>
+    <ul>
+      <li>O problema que resolve.</li>
+      <li>A abordagem adotada.</li>
+      <li>Testes executados e resultados.</li>
+      <li>Mudanças na interface ou no storage layout.</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="áreas-que-precisam-de-contribuição">Áreas que precisam de contribuição</h2>
+
+<ul>
+  <li>Estratégias de alocação inovadoras.</li>
+  <li>Melhorias na documentação e tutoriais.</li>
+  <li>Ferramentas de análise de segurança (Slither, Mythril, Echidna).</li>
+  <li>Scripts de deploy para novas redes.</li>
+  <li>Integração de DAO tokenizada com proposta/voto/quorum.</li>
+  <li>Testes de integração para a camada de governança.</li>
+</ul>
+
+<h2 id="comunidade">Comunidade</h2>
+
+<ul>
+  <li>Documentação oficial: <a href="https://docs.allo.gitcoin.co/">docs.allo.gitcoin.co</a></li>
+  <li>GitHub original: <a href="https://github.com/allo-protocol/allo-v2">allo-protocol/allo-v2</a></li>
+  <li>Fork acadêmico: <a href="https://github.com/RapportTecnologia/allo">RapportTecnologia/allo</a></li>
+  <li>Site do mantenedor acadêmico: <a href="https://rapport.tec.br/allo">rapport.tec.br/allo</a></li>
+</ul>
+
+    </article>
+  </div>
+</div>
+
+  </main>
+  <footer class="site-footer">
+  <div class="wrapper">
+    <div class="footer-grid">
+      <div>
+        <h3 class="footer-brand">ALLO Protocol</h3>
+        <p class="footer-tagline">Alocação e Distribuição Descentralizada de Fundos</p>
+      </div>
+      <div>
+        <h4>Links</h4>
+        <ul class="footer-links">
+          <li><a href="/allo/">Início</a></li>
+          <li><a href="/allo/historia/">História</a></li>
+          <li><a href="/allo/arquitetura/">Arquitetura</a></li>
+          <li><a href="/allo/dao/">Governança DAO</a></li>
+          <li><a href="/allo/uso/">Como Usar</a></li>
+          <li><a href="/allo/seguranca/">Segurança</a></li>
+          <li><a href="/allo/contribuir/">Contribuir</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Fontes</h4>
+        <ul class="footer-links">
+          <li><a href="https://github.com/RapportTecnologia/allo" target="_blank" rel="noopener">Fork Acadêmico ↗</a></li>
+          <li><a href="https://github.com/allo-protocol/allo-v2" target="_blank" rel="noopener">Allo Protocol V2 ↗</a></li>
+          <li><a href="https://docs.allo.gitcoin.co/" target="_blank" rel="noopener">Documentação Allo ↗</a></li>
+          <li><a href="https://rapport.tec.br" target="_blank" rel="noopener">Rapport Tecnologia ↗</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>
+        &copy; 2026 Rapport Tecnologia.
+        Conteúdo baseado no <a href="https://github.com/allo-protocol/allo-v2" target="_blank" rel="noopener">Allo Protocol V2</a> (Gitcoin, AGPL-3.0)
+        e no trabalho acadêmico de <strong>Francisco Josias da Silva Batista</strong>.
+      </p>
+    </div>
+  </div>
+</footer>
+
+  <script type="module">
+    const blocks = [...document.querySelectorAll('pre code.language-mermaid')];
+    if (blocks.length) {
+      try {
+        const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'strict',
+          theme: 'base',
+          fontFamily: 'Inter, Arial, sans-serif',
+          flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'linear' },
+          themeVariables: {
+            darkMode: false,
+            background: '#ffffff',
+            primaryColor: '#fff0e9',
+            primaryTextColor: '#222222',
+            primaryBorderColor: '#a63824',
+            secondaryColor: '#edf4ef',
+            secondaryTextColor: '#222222',
+            secondaryBorderColor: '#46634e',
+            tertiaryColor: '#f5f4f2',
+            tertiaryTextColor: '#222222',
+            tertiaryBorderColor: '#68605b',
+            lineColor: '#55515a',
+            textColor: '#222222',
+            mainBkg: '#fff0e9',
+            nodeBorder: '#a63824',
+            clusterBkg: '#f5f4f2',
+            clusterBorder: '#68605b',
+            titleColor: '#222222',
+            edgeLabelBackground: '#ffffff',
+            nodeTextColor: '#222222',
+            fontSize: '16px'
+          }
+        });
+        for (const [index, block] of blocks.entries()) {
+          try {
+            const { svg, bindFunctions } = await mermaid.render(`allo-diagram-${index}`, block.textContent);
+            const diagram = document.createElement('div');
+            diagram.className = 'mermaid';
+            diagram.tabIndex = 0;
+            diagram.setAttribute('role', 'region');
+            diagram.setAttribute('aria-label', 'Diagrama do protocolo. Use as setas para rolar horizontalmente.');
+            diagram.innerHTML = svg;
+            block.parentElement.replaceWith(diagram);
+            bindFunctions?.(diagram);
+            const hint = document.createElement('p');
+            hint.className = 'diagram-hint';
+            hint.textContent = 'Diagrama em tamanho legível. Se necessário, role na horizontal para explorar.';
+            diagram.after(hint);
+          } catch (error) {
+            console.error('Não foi possível renderizar o diagrama:', error);
+          }
+        }
+      } catch (error) {
+        console.error('Mermaid indisponível; a definição textual foi preservada.', error);
+      }
+    }
+  </script>
+</body>
+</html>
