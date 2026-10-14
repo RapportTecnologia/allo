@@ -6,14 +6,42 @@ description: >-
   governança DAO, instruções de uso e guia de contribuição para desenvolvedores.
 baseurl: "/allo"
 url: "https://rapport.tec.br"
+lang: "pt-BR"
+keywords:
+  - ALLO Protocol
+  - Allo Protocol V2
+  - Gitcoin
+  - Ethereum
+  - smart contracts
+  - DeFi
+  - alocação descentralizada
+  - governança DAO
+  - multisig
+  - timelock
+  - padrões de projeto GoF
+  - Solidity
+  - Rapport Tecnologia
 
 author:
   name: "Rapport Tecnologia"
   email: "admin@rapport.tec.br"
+  twitter: "rapport_tec"
+
+twitter:
+  username: "rapport_tec"
+  card: "summary_large_image"
+
+social:
+  name: "Rapport Tecnologia"
+  links:
+    - https://twitter.com/rapport_tec
+    - https://github.com/RapportTecnologia
+    - https://rapport.tec.br
 
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-sitemap
 
 markdown: kramdown
 highlighter: rouge
